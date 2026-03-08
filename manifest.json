@@ -1,7 +1,8 @@
 {
   "name": "Videorounds",
   "short_name": "Videorounds",
-  "start_url": "/",
+  "start_url": "/videorounds-pwa/",
+  "scope": "/videorounds-pwa/",
   "display": "standalone",
   "background_color": "#0a1430",
   "theme_color": "#0a1430",
