@@ -99,27 +99,42 @@
       flex:1;
     }
 
-    .brand-logo-wrap{
-      display:flex;
-      align-items:center;
+    .brand-simple{
       min-width:0;
-      max-width:100%;
-      padding:8px 10px;
-      border-radius:16px;
-      background:rgba(255,255,255,.055);
-      border:1px solid var(--line);
-      backdrop-filter:blur(12px);
-      box-shadow:var(--shadow-soft);
     }
 
-    .brand-logo{
-      display:block;
-      width:auto;
-      height:34px;
-      max-width:min(54vw, 260px);
-      object-fit:contain;
-      object-position:left center;
-      filter: drop-shadow(0 6px 16px rgba(0,0,0,.18));
+    .brand-mini-mark{
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      flex:none;
+      background:
+        radial-gradient(circle at 28% 24%, rgba(255,255,255,.34), transparent 30%),
+        linear-gradient(180deg, var(--accent1), var(--accent2) 58%, var(--accent3));
+      box-shadow:0 10px 22px rgba(77,141,255,.18);
+    }
+
+    .brand-copy{
+      min-width:0;
+    }
+
+    .brand-copy h1{
+      margin:0;
+      font-size:18px;
+      line-height:1;
+      letter-spacing:-.03em;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .brand-copy p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
     .status-chip{
@@ -203,24 +218,20 @@
       z-index:-2;
     }
 
-    .hero-watermark{
-      position:absolute;
-      right:-8px;
-      bottom:-4px;
-      width:180px;
-      max-width:46%;
-      opacity:.07;
-      pointer-events:none;
-      filter:grayscale(1) brightness(1.8);
-      z-index:-1;
-      user-select:none;
-    }
-
     .hero-wrap{
       position:relative;
       z-index:1;
       display:grid;
       gap:16px;
+    }
+
+    .hero-main-logo{
+      display:block;
+      width:min(100%, 460px);
+      height:auto;
+      margin:0 0 16px 0;
+      object-fit:contain;
+      filter:drop-shadow(0 10px 22px rgba(0,0,0,.18));
     }
 
     .hero-top{
@@ -271,10 +282,10 @@
 
     .hero-title{
       margin:0;
-      font-size:clamp(28px,6.8vw,42px);
-      line-height:.98;
-      letter-spacing:-.055em;
-      max-width:11ch;
+      font-size:clamp(30px,7vw,46px);
+      line-height:.95;
+      letter-spacing:-.06em;
+      max-width:10ch;
     }
 
     .hero-gradient{
@@ -783,13 +794,9 @@
     }
 
     @media (max-width:420px){
-      .brand-logo{
-        height:30px;
-        max-width:52vw;
-      }
-      .hero-watermark{
-        width:150px;
-        opacity:.06;
+      .hero-main-logo{
+        width:min(100%, 340px);
+        margin-bottom:14px;
       }
     }
 
@@ -828,13 +835,8 @@
         grid-column:auto;
       }
 
-      .brand-logo{
-        height:38px;
-        max-width:320px;
-      }
-
-      .hero-watermark{
-        width:220px;
+      .hero-main-logo{
+        width:min(100%, 500px);
       }
     }
   </style>
@@ -842,17 +844,11 @@
 <body>
   <div class="app">
     <header class="topbar">
-      <div class="brand">
-        <div class="brand-logo-wrap">
-          <img
-            src="videorounds-logo.png"
-            alt="Videorounds in Movement Disorders"
-            class="brand-logo"
-            onerror="this.style.display='none'; document.getElementById('brandFallback').style.display='block';"
-          />
-          <div id="brandFallback" style="display:none;color:#fff;font-weight:900;font-size:16px;letter-spacing:-.02em;">
-            Videorounds
-          </div>
+      <div class="brand brand-simple">
+        <div class="brand-mini-mark"></div>
+        <div class="brand-copy">
+          <h1>Videorounds</h1>
+          <p>Movement Disorders · Italia</p>
         </div>
       </div>
       <div id="statusChip" class="status-chip">Caricamento…</div>
@@ -861,16 +857,15 @@
     <main class="pages">
       <section class="page active" data-page="home">
         <div class="hero">
-          <img
-            src="videorounds-logo.png"
-            alt=""
-            class="hero-watermark"
-            aria-hidden="true"
-            onerror="this.style.display='none';"
-          />
-
           <div class="hero-wrap">
             <div>
+              <img
+                src="videorounds-logo.png"
+                alt="Videorounds in Movement Disorders"
+                class="hero-main-logo"
+                onerror="this.style.display='none';"
+              />
+
               <div class="hero-top">
                 <div class="hero-label">
                   <span class="hero-dot"></span>
@@ -889,13 +884,13 @@
               <div style="height:14px"></div>
 
               <h2 class="hero-title">
-                <span class="hero-gradient">Piattaforma</span><br>
-                scientifica per<br>
+                <span class="hero-gradient">Videorounds</span><br>
+                in<br>
                 Movement Disorders
               </h2>
 
               <p class="hero-desc">
-                Accesso rapido a prossimo incontro, casi clinici, archivio scientifico, network dei centri e strumenti di partecipazione, in una struttura più elegante e coerente con il marchio Videorounds.
+                Accesso rapido a prossimo incontro, casi clinici, archivio scientifico, network dei centri e strumenti di partecipazione, in una struttura elegante e più coerente con il marchio Videorounds.
               </p>
 
               <div class="cta-grid">
