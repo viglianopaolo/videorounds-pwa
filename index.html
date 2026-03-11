@@ -735,7 +735,15 @@ async function init() {
   try {
     const table = await fetchSheet(GID_EVENTI);
     if (!table || !table.rows || table.rows.length === 0) throw new Error('no data');
-    const ev = rowToObj(table.rows[0]);
+
+    // Trova il prossimo evento futuro (o l'ultimo se tutti passati)
+    const today = new Date(); today.setHours(0,0,0,0);
+    let evRow = table.rows[table.rows.length - 1];
+    for (const row of table.rows) {
+      const d = parseGvizDate(row.c[2] && row.c[2].v);
+      if (d && d >= today) { evRow = row; break; }
+    }
+    const ev = rowToObj(evRow);
 
     document.getElementById('home-event-card').innerHTML =
       `<div class="section-label">In evidenza</div><h2>Prossimo Videoround</h2>${renderHomeCard(ev)}`;
