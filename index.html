@@ -101,23 +101,18 @@
   }
 
   .logo-img-container {
-    /* Ritaglia la parte bassa con "ralpharma": l'immagine è 1333x750px
-       Il logo utile occupa circa i 2/3 superiori → mostriamo ~67% altezza */
-    width: 240px;
-    height: 80px;        /* altezza finestra visibile */
+    width: 320px;
+    height: 108px;
     overflow: hidden;
     position: relative;
   }
 
   .logo-img-container img {
-    width: 240px;
-    /* Sposta l'immagine in alto per centrare logo+testo, nascondendo ralpharma */
+    width: 320px;
     position: absolute;
-    top: -18px;
+    top: -24px;
     left: 0;
-    /* Inverte il nero in bianco, poi corregge hue verso azzurro della palette */
     filter: invert(1) brightness(1.6) hue-rotate(190deg) saturate(0.8);
-    /* Ulteriore luminosità per il testo */
   }
 
   /* Divider line sotto il logo */
