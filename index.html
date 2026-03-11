@@ -1,1772 +1,578 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Videorounds in Movement Disorders</title>
 
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#08142f" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Videorounds" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
-
-  <style>
-    :root{
-      --bg:#07142c;
-      --bg2:#0a1b42;
-      --bg3:#122057;
-      --card:rgba(255,255,255,.07);
-      --card-2:rgba(255,255,255,.05);
-      --card-3:rgba(255,255,255,.035);
-      --line:rgba(255,255,255,.10);
-      --line-2:rgba(255,255,255,.07);
-      --text:#f5f8ff;
-      --muted:#b8c7ea;
-      --muted-2:#90a6d8;
-      --accent1:#77efd0;
-      --accent2:#67a7ff;
-      --accent3:#8b74ff;
-      --shadow:0 24px 64px rgba(0,0,0,.34);
-      --shadow-soft:0 10px 30px rgba(0,0,0,.18);
-      --radius-xl:30px;
-      --radius-lg:24px;
-      --radius-md:18px;
-      --radius-sm:14px;
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-    }
-
-    *{
-      box-sizing:border-box;
-      -webkit-tap-highlight-color:transparent;
-    }
-
-    html,body{
-      height:100%;
-      margin:0;
-    }
-
-    body{
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(circle at 10% 8%, rgba(119,239,208,.12), transparent 18%),
-        radial-gradient(circle at 88% 14%, rgba(103,167,255,.14), transparent 22%),
-        radial-gradient(circle at 72% 84%, rgba(139,116,255,.18), transparent 24%),
-        linear-gradient(160deg, var(--bg), var(--bg2) 58%, var(--bg3));
-      overflow:hidden;
-    }
-
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.03), transparent 14%),
-        radial-gradient(circle at center, rgba(255,255,255,.02), transparent 64%);
-      opacity:.7;
-    }
-
-    a{ color:inherit; }
-    button,input,select{ font:inherit; }
-
-    .app{
-      height:100%;
-      display:flex;
-      flex-direction:column;
-      padding-top:var(--safe-top);
-      position:relative;
-    }
-
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:12px 14px 8px;
-      position:relative;
-      z-index:12;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width:0;
-      flex:1;
-    }
-
-    .brand-simple{
-      min-width:0;
-    }
-
-    .brand-mini-mark{
-      width:36px;
-      height:36px;
-      border-radius:12px;
-      flex:none;
-      background:
-        radial-gradient(circle at 28% 24%, rgba(255,255,255,.34), transparent 30%),
-        linear-gradient(180deg, var(--accent1), var(--accent2) 58%, var(--accent3));
-      box-shadow:0 10px 22px rgba(77,141,255,.18);
-    }
-
-    .brand-copy{
-      min-width:0;
-    }
-
-    .brand-copy h1{
-      margin:0;
-      font-size:18px;
-      line-height:1;
-      letter-spacing:-.03em;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .brand-copy p{
-      margin:4px 0 0;
-      color:var(--muted);
-      font-size:12px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .status-chip{
-      flex:none;
-      max-width:34vw;
-      min-height:34px;
-      padding:8px 11px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.06);
-      color:#e4ecff;
-      font-size:11px;
-      font-weight:800;
-      display:flex;
-      align-items:center;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      backdrop-filter:blur(12px);
-    }
-
-    .pages{
-      flex:1;
-      overflow:auto;
-      scroll-behavior:smooth;
-      padding:4px 12px calc(96px + var(--safe-bottom));
-    }
-
-    .page{
-      display:none;
-      animation:fade .18s ease;
-    }
-
-    .page.active{ display:block; }
-
-    @keyframes fade{
-      from{ opacity:.35; transform:translateY(6px); }
-      to{ opacity:1; transform:none; }
-    }
-
-    .hero,
-    .card,
-    .surface{
-      background:linear-gradient(180deg, var(--card), var(--card-2));
-      border:1px solid var(--line);
-      box-shadow:var(--shadow-soft);
-      backdrop-filter:blur(18px);
-    }
-
-    .hero{
-      border-radius:28px;
-      padding:18px;
-      position:relative;
-      overflow:hidden;
-      margin-bottom:16px;
-      box-shadow:var(--shadow);
-      isolation:isolate;
-    }
-
-    .hero::before{
-      content:"";
-      position:absolute;
-      width:170px;
-      height:170px;
-      right:-40px;
-      top:-36px;
-      border-radius:999px;
-      background:radial-gradient(circle, rgba(103,167,255,.24), transparent 66%);
-      z-index:-2;
-    }
-
-    .hero::after{
-      content:"";
-      position:absolute;
-      width:190px;
-      height:190px;
-      right:-24px;
-      bottom:-84px;
-      border-radius:999px;
-      background:radial-gradient(circle, rgba(139,116,255,.18), transparent 66%);
-      z-index:-2;
-    }
-
-    .hero-wrap{
-      position:relative;
-      z-index:1;
-      display:grid;
-      gap:16px;
-    }
-
-    .hero-top{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-    }
-
-    .hero-label{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      color:#dce7ff;
-      font-size:11px;
-      font-weight:900;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-    }
-
-    .hero-dot{
-      width:8px;
-      height:8px;
-      border-radius:999px;
-      background:linear-gradient(180deg, var(--accent1), var(--accent2));
-      box-shadow:0 0 0 6px rgba(119,239,208,.08);
-    }
-
-    .pill-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-    }
-
-    .pill,.tag,.soft-pill{
-      min-height:29px;
-      padding:7px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.055);
-      color:#e4ecff;
-      font-size:12px;
-      font-weight:800;
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-    }
-
-    .hero-title{
-      margin:0;
-      font-size:clamp(30px,7vw,46px);
-      line-height:.95;
-      letter-spacing:-.06em;
-      max-width:10ch;
-    }
-
-    .hero-gradient{
-      background:linear-gradient(90deg, #ffffff 0%, var(--accent1) 34%, var(--accent2) 68%, #d0c4ff 100%);
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
-    }
-
-    .hero-desc{
-      margin:10px 0 0;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.52;
-      max-width:40ch;
-    }
-
-    .hero-logo-card{
-      min-height:110px;
-      padding:14px 16px;
-      border-radius:22px;
-      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow:0 12px 28px rgba(0,0,0,.16);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-    }
-
-    .hero-logo-card-img{
-      display:block;
-      width:100%;
-      max-width:360px;
-      max-height:72px;
-      object-fit:contain;
-      object-position:center;
-      filter:drop-shadow(0 6px 16px rgba(0,0,0,.14));
-    }
-
-    .hero-logo-fallback{
-      color:#ffffff;
-      font-size:20px;
-      line-height:1.15;
-      font-weight:900;
-      letter-spacing:-.03em;
-      text-align:center;
-    }
-
-    .home-summary{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-
-    .stat-mini{
-      min-height:82px;
-      padding:13px;
-      border-radius:18px;
-      background:rgba(255,255,255,.045);
-      border:1px solid var(--line-2);
-    }
-
-    .stat-mini .label{
-      color:var(--muted-2);
-      font-size:11px;
-      font-weight:800;
-      text-transform:uppercase;
-      letter-spacing:.05em;
-    }
-
-    .stat-mini .value{
-      margin-top:8px;
-      font-size:16px;
-      line-height:1.2;
-      font-weight:900;
-      color:#fff;
-      word-break:break-word;
-    }
-
-    .stat-mini.big .value{
-      font-size:29px;
-      line-height:1;
-      letter-spacing:-.05em;
-    }
-
-    .progress-card{
-      padding:14px;
-      border-radius:20px;
-      background:rgba(255,255,255,.045);
-      border:1px solid var(--line-2);
-    }
-
-    .progress-top{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      font-size:13px;
-    }
-
-    .progress-top span{
-      color:var(--muted);
-    }
-
-    .progress-top strong{
-      color:#fff;
-      font-size:14px;
-    }
-
-    .track{
-      height:12px;
-      margin-top:10px;
-      border-radius:999px;
-      overflow:hidden;
-      background:rgba(255,255,255,.08);
-    }
-
-    .fill{
-      height:100%;
-      width:0%;
-      border-radius:999px;
-      background:linear-gradient(90deg, #36deb5 0%, #4d8dff 52%, #8568ff 100%);
-      transition:width .28s ease;
-    }
-
-    .cta-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:2px;
-    }
-
-    .btn,
-    .mini-btn,
-    .nav-btn{
-      appearance:none;
-      border:none;
-      cursor:pointer;
-      text-decoration:none;
-    }
-
-    .btn{
-      min-height:54px;
-      padding:13px 15px;
-      border-radius:18px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      color:#fff;
-      font-size:14px;
-      font-weight:900;
-      letter-spacing:-.01em;
-      background:rgba(255,255,255,.07);
-      border:1px solid var(--line);
-      box-shadow:0 8px 18px rgba(0,0,0,.14);
-    }
-
-    .btn.primary{
-      background:linear-gradient(90deg, #36deb5 0%, #4d8dff 60%, #7c79ff 100%);
-      border:none;
-    }
-
-    .btn.full{ grid-column:1 / -1; }
-
-    .section-head{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:12px;
-      margin:14px 2px 12px;
-    }
-
-    .section-head h3{
-      margin:0;
-      font-size:28px;
-      line-height:1;
-      letter-spacing:-.04em;
-    }
-
-    .section-head p{
-      margin:4px 0 0;
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .card{
-      border-radius:26px;
-      padding:16px;
-      margin-bottom:12px;
-    }
-
-    .surface{
-      border-radius:22px;
-      padding:15px;
-    }
-
-    .compact-grid,
-    .quick-grid,
-    .list,
-    .participa-grid{
-      display:grid;
-      gap:12px;
-    }
-
-    .feature-card,
-    .case-card,
-    .archive-item,
-    .center-card,
-    .participa-card{
-      border-radius:22px;
-      padding:15px;
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
-      border:1px solid var(--line);
-      box-shadow:var(--shadow-soft);
-    }
-
-    .feature-card{
-      display:flex;
-      gap:13px;
-      align-items:flex-start;
-    }
-
-    .feature-icon,
-    .nav-icon{
-      width:42px;
-      height:42px;
-      border-radius:15px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex:none;
-      background:linear-gradient(180deg, rgba(119,239,208,.18), rgba(103,167,255,.18));
-      border:1px solid var(--line);
-      color:#fff;
-    }
-
-    .nav-icon{
-      width:34px;
-      height:34px;
-      border-radius:12px;
-      background:transparent;
-      border:none;
-    }
-
-    .feature-icon svg,
-    .nav-icon svg{
-      width:20px;
-      height:20px;
-      stroke:currentColor;
-      fill:none;
-      stroke-width:2;
-      stroke-linecap:round;
-      stroke-linejoin:round;
-    }
-
-    .feature-copy h4,
-    .case-title,
-    .archive-title,
-    .center-title,
-    .participa-card h4{
-      margin:0 0 6px;
-      color:#fff;
-      line-height:1.14;
-      letter-spacing:-.03em;
-    }
-
-    .feature-copy h4{ font-size:19px; }
-    .case-title,.archive-title,.center-title,.participa-card h4{ font-size:21px; }
-
-    .meta,.subcopy{
-      margin:0;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.5;
-    }
-
-    .next-focus{
-      border-radius:20px;
-      padding:15px;
-      background:linear-gradient(180deg, rgba(103,167,255,.12), rgba(139,116,255,.08));
-      border:1px solid var(--line);
-    }
-
-    .next-focus .label{
-      color:#dce7ff;
-      font-size:11px;
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      margin-bottom:8px;
-    }
-
-    .next-focus .value{
-      font-size:21px;
-      line-height:1.14;
-      font-weight:900;
-      letter-spacing:-.04em;
-    }
-
-    .metrics{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-
-    .metric{
-      min-height:88px;
-      padding:13px;
-      border-radius:18px;
-      background:rgba(255,255,255,.045);
-      border:1px solid var(--line-2);
-    }
-
-    .metric .label{
-      color:var(--muted-2);
-      font-size:11px;
-      font-weight:800;
-      text-transform:uppercase;
-      letter-spacing:.05em;
-    }
-
-    .metric .value{
-      margin-top:8px;
-      font-size:17px;
-      line-height:1.2;
-      font-weight:900;
-    }
-
-    .metric.counter .value{
-      font-size:32px;
-      line-height:1;
-      letter-spacing:-.05em;
-    }
-
-    .case-code,
-    .archive-code{
-      display:inline-flex;
-      align-items:center;
-      min-height:38px;
-      padding:8px 12px;
-      border-radius:14px;
-      background:linear-gradient(90deg, rgba(54,222,181,.14), rgba(77,141,255,.14));
-      border:1px solid var(--line);
-      color:#fff;
-      font-size:18px;
-      font-weight:900;
-      letter-spacing:-.03em;
-      margin-bottom:12px;
-    }
-
-    .tag-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-top:12px;
-    }
-
-    .item-actions,
-    .center-actions{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:14px;
-    }
-
-    .mini-btn{
-      min-height:40px;
-      padding:10px 12px;
-      border-radius:14px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      background:#22356c;
-      border:1px solid rgba(255,255,255,.08);
-      color:#fff;
-      font-size:13px;
-      font-weight:900;
-      line-height:1;
-      white-space:nowrap;
-    }
-
-    .mini-btn.green{
-      background:#176d66;
-    }
-
-    .tool-row{
-      display:grid;
-      gap:10px;
-      margin-bottom:12px;
-    }
-
-    input,select{
-      width:100%;
-      min-height:50px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.055);
-      color:#fff;
-      padding:0 14px;
-      outline:none;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
-    }
-
-    input::placeholder{ color:#bfd0f2; }
-    select option{ color:#111; }
-
-    .map-box{
-      height:285px;
-      border-radius:24px;
-      overflow:hidden;
-      border:1px solid var(--line);
-      background:#dfe7ef;
-      box-shadow:var(--shadow-soft);
-    }
-
-    .map-box iframe{
-      width:100%;
-      height:100%;
-      border:0;
-    }
-
-    .center-card.active{
-      outline:2px solid rgba(119,239,208,.55);
-      background:linear-gradient(180deg, rgba(119,239,208,.08), rgba(103,167,255,.06));
-    }
-
-    .empty{
-      padding:18px;
-      border-radius:18px;
-      border:1px dashed rgba(255,255,255,.15);
-      text-align:center;
-      color:var(--muted);
-      background:rgba(255,255,255,.025);
-    }
-
-    .bottom-nav{
-      position:fixed;
-      left:0;
-      right:0;
-      bottom:0;
-      z-index:25;
-      padding:10px 12px calc(10px + var(--safe-bottom));
-      background:linear-gradient(180deg, rgba(7,20,44,.02), rgba(7,20,44,.90) 24%, rgba(7,20,44,.98));
-      backdrop-filter:blur(18px);
-    }
-
-    .nav-wrap{
-      max-width:900px;
-      margin:0 auto;
-      display:grid;
-      grid-template-columns:repeat(6,1fr);
-      gap:8px;
-      background:rgba(255,255,255,.08);
-      border:1px solid var(--line);
-      border-radius:24px;
-      padding:8px;
-      box-shadow:var(--shadow);
-    }
-
-    .nav-btn{
-      min-height:62px;
-      border-radius:18px;
-      background:transparent;
-      color:#ccd8f8;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:6px;
-      font-size:10.5px;
-      font-weight:900;
-      text-align:center;
-      line-height:1.05;
-      padding:6px 4px;
-    }
-
-    .nav-btn.active{
-      color:#fff;
-      background:linear-gradient(180deg, rgba(119,239,208,.18), rgba(103,167,255,.16));
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
-    }
-
-    .nav-btn.active .nav-icon{
-      background:linear-gradient(180deg, rgba(119,239,208,.18), rgba(103,167,255,.14));
-      border:1px solid rgba(255,255,255,.08);
-    }
-
-    .modal-backdrop{
-      position:fixed;
-      inset:0;
-      z-index:40;
-      background:rgba(2,8,20,.72);
-      display:none;
-      align-items:flex-end;
-      justify-content:center;
-      padding:16px;
-      backdrop-filter:blur(6px);
-    }
-
-    .modal-backdrop.show{ display:flex; }
-
-    .modal{
-      width:min(760px,100%);
-      max-height:84vh;
-      overflow:auto;
-      background:linear-gradient(180deg,#14204d,#0f1738);
-      border:1px solid var(--line);
-      border-radius:26px;
-      padding:18px;
-      box-shadow:0 28px 80px rgba(0,0,0,.5);
-    }
-
-    .modal-top{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:flex-start;
-    }
-
-    .modal h3{
-      margin:10px 0 0;
-      font-size:28px;
-      line-height:1.08;
-      letter-spacing:-.04em;
-    }
-
-    .close-btn{
-      min-height:40px;
-      padding:10px 14px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-      color:#fff;
-      font-weight:900;
-      cursor:pointer;
-    }
-
-    @media (max-width:420px){
-      .hero-logo-card{
-        min-height:96px;
-        padding:12px 14px;
-      }
-
-      .hero-logo-card-img{
-        max-height:60px;
-      }
-    }
-
-    @media (min-width:760px){
-      .pages{
-        max-width:900px;
-        width:100%;
-        margin:0 auto;
-        padding-left:16px;
-        padding-right:16px;
-      }
-
-      .hero-wrap{
-        grid-template-columns:1.05fr .95fr;
-        align-items:end;
-      }
-
-      .quick-grid,
-      .participa-grid{
-        grid-template-columns:1fr 1fr;
-      }
-
-      .tool-row{
-        grid-template-columns:1.55fr 1fr 1fr;
-      }
-
-      .tool-row.single{
-        grid-template-columns:1fr;
-      }
-
-      .cta-grid{
-        grid-template-columns:repeat(3,1fr);
-      }
-
-      .btn.full{
-        grid-column:auto;
-      }
-
-      .hero-logo-card{
-        min-height:124px;
-      }
-
-      .hero-logo-card-img{
-        max-width:400px;
-        max-height:78px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#050d1f">
+
+<title>Videorounds in Movement Disorders</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+<style>
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #050d1f;
+    --bg2:     #0b1835;
+    --surface: rgba(255,255,255,0.06);
+    --border:  rgba(255,255,255,0.10);
+    --accent:  #4a90e2;
+    --accent2: #7cb9ff;
+    --gold:    #c9a84c;
+    --text:    #e8eef8;
+    --muted:   rgba(232,238,248,0.50);
+    --nav-h:   80px;
+    --safe-b:  env(safe-area-inset-bottom, 0px);
+  }
+
+  html { background: var(--bg); }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    padding-bottom: calc(var(--nav-h) + var(--safe-b));
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -20%; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(ellipse, rgba(74,144,226,0.18) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* PAGE SYSTEM */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* SCROLL */
+  .scroll {
+    position: relative; z-index: 1;
+    max-width: 480px; margin: 0 auto;
+    padding: 20px 16px 0;
+  }
+
+  /* PAGE HEADER */
+  .page-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 20px 16px 8px;
+    max-width: 480px; margin: 0 auto;
+    position: relative; z-index: 1;
+  }
+  .page-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px; font-weight: 400;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+    border: 1px solid var(--border);
+    border-radius: 28px; padding: 36px 28px 32px;
+    text-align: center;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    position: relative; overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+  }
+  .hero::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  }
+  .hero-logo { max-width: 220px; width: 100%; margin-bottom: 24px; }
+  .hero-wordmark { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 16px; }
+  .hero-wordmark .brand {
+    font-family: 'DM Serif Display', serif; font-size: 28px; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #ffffff, var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-wordmark .sub {
+    font-size: 11px; font-weight: 500; letter-spacing: 2.5px;
+    text-transform: uppercase; color: var(--gold); opacity: 0.9;
+  }
+  .hero-desc { font-size: 14px; line-height: 1.6; color: var(--muted); max-width: 300px; margin: 0 auto 28px; }
+
+  /* QUICK GRID */
+  .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
+  .quick-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 16px; border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.07);
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .quick-btn:active { transform: scale(0.97); background: rgba(255,255,255,0.12); }
+  .quick-btn .icon { font-size: 18px; flex-shrink: 0; }
+  .quick-btn.wide {
+    grid-column: span 2;
+    background: linear-gradient(135deg, rgba(74,144,226,0.25), rgba(74,144,226,0.12));
+    border-color: rgba(74,144,226,0.35);
+    justify-content: center; font-size: 14px; font-weight: 600;
+  }
+
+  /* SECTION CARD */
+  .section {
+    margin-top: 16px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+    border: 1px solid var(--border);
+    border-radius: 24px; padding: 22px 20px;
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    position: relative; overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+  }
+  .section::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  }
+  .section-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent2); margin-bottom: 12px; opacity: 0.8;
+  }
+  .section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px; font-weight: 400; margin-bottom: 14px;
+  }
+
+  /* EVENT CARD (home) */
+  .event-card { display: flex; gap: 14px; align-items: flex-start; }
+  .event-date-badge {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--accent), #2d6bbf);
+    border-radius: 14px; padding: 10px 14px; min-width: 56px; flex-shrink: 0;
+  }
+  .event-date-badge .day { font-size: 22px; font-weight: 700; line-height: 1; }
+  .event-date-badge .month { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; opacity: 0.85; margin-top: 2px; }
+  .event-info { flex: 1; }
+  .event-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+  .event-meta { font-size: 13px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
+  .event-meta span { display: flex; align-items: center; gap: 5px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(74,144,226,0.15); border: 1px solid rgba(74,144,226,0.3);
+    color: var(--accent2); border-radius: 20px; padding: 4px 10px;
+    font-size: 11px; font-weight: 600; margin-top: 10px; letter-spacing: 0.5px;
+    cursor: pointer;
+  }
+
+  /* STATS */
+  .stats { display: flex; }
+  .stat { flex: 1; text-align: center; padding: 12px 8px; border-right: 1px solid var(--border); }
+  .stat:last-child { border-right: none; }
+  .stat .val {
+    font-family: 'DM Serif Display', serif; font-size: 26px;
+    background: linear-gradient(135deg, #ffffff, var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    line-height: 1.1;
+  }
+  .stat .lbl { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+
+  /* COUNTDOWN */
+  .countdown-row { display: flex; gap: 10px; justify-content: center; margin: 20px 0 8px; }
+  .cd-box {
+    display: flex; flex-direction: column; align-items: center;
+    background: rgba(74,144,226,0.12); border: 1px solid rgba(74,144,226,0.25);
+    border-radius: 14px; padding: 12px 16px; min-width: 64px;
+  }
+  .cd-box .cd-num {
+    font-family: 'DM Serif Display', serif; font-size: 30px; line-height: 1;
+    background: linear-gradient(135deg, #fff, var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .cd-box .cd-lbl { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+
+  /* INFO ROWS */
+  .info-row { display: flex; align-items: flex-start; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--border); }
+  .info-row:last-child { border-bottom: none; }
+  .info-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; margin-top: 1px; }
+  .info-body { flex: 1; }
+  .info-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+  .info-value { font-size: 15px; font-weight: 500; line-height: 1.4; }
+
+  /* CHIPS */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+  .chip { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 500; }
+
+  /* CTA */
+  .cta-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 16px; border-radius: 16px; border: none;
+    background: linear-gradient(135deg, var(--accent), #2d6bbf);
+    color: white; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 8px;
+    transition: opacity 0.2s, transform 0.15s;
+    text-decoration: none; -webkit-tap-highlight-color: transparent;
+  }
+  .cta-btn:active { opacity: 0.85; transform: scale(0.98); }
+  .cta-btn.secondary { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); margin-top: 8px; }
+
+  /* LOADING */
+  .loading-pulse { display: flex; flex-direction: column; gap: 10px; padding: 8px 0; }
+  .skeleton {
+    background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+    background-size: 200% 100%; animation: shimmer 1.5s infinite;
+    border-radius: 8px; height: 16px;
+  }
+  .skeleton.tall { height: 80px; border-radius: 14px; }
+  .skeleton.short { width: 60%; }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  /* ERROR */
+  .error-box { text-align: center; padding: 32px 16px; color: var(--muted); }
+  .error-box .error-icon { font-size: 36px; margin-bottom: 10px; }
+  .error-box p { font-size: 14px; line-height: 1.6; }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(5,13,31,0.85);
+    backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; justify-content: space-around; align-items: flex-end;
+    padding: 10px 4px calc(10px + var(--safe-b));
+    height: calc(var(--nav-h) + var(--safe-b));
+  }
+  .nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; padding: 6px 8px; border-radius: 14px;
+    transition: background 0.2s; -webkit-tap-highlight-color: transparent; min-width: 50px;
+  }
+  .nav-icon { font-size: 22px; line-height: 1; transition: transform 0.2s; }
+  .nav-label { font-size: 10px; font-weight: 500; color: var(--muted); letter-spacing: 0.2px; transition: color 0.2s; }
+  .nav-item.active .nav-label { color: var(--accent2); }
+  .nav-item.active .nav-icon  { transform: scale(1.1); }
+  .nav-item:active { background: rgba(255,255,255,0.06); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+</style>
 </head>
 <body>
-  <div class="app">
-    <header class="topbar">
-      <div class="brand brand-simple">
-        <div class="brand-mini-mark"></div>
-        <div class="brand-copy">
-          <h1>Videorounds</h1>
-          <p>Movement Disorders · Italia</p>
-        </div>
-      </div>
-      <div id="statusChip" class="status-chip">Caricamento…</div>
-    </header>
 
-    <main class="pages">
-      <section class="page active" data-page="home">
-        <div class="hero">
-          <div class="hero-wrap">
-            <div>
-              <div class="hero-top">
-                <div class="hero-label">
-                  <span class="hero-dot"></span>
-                  <span>Official mobile app</span>
-                </div>
-              </div>
+<!-- ═══════════════════ PAGE: HOME ═══════════════════ -->
+<div id="page-Home" class="page active">
+<div class="scroll">
 
-              <div style="height:10px"></div>
-
-              <div class="pill-row">
-                <div class="pill">Archivio casi</div>
-                <div class="pill">Network centri</div>
-                <div class="pill">PWA iPhone</div>
-              </div>
-
-              <div style="height:14px"></div>
-
-              <h2 class="hero-title">
-                <span class="hero-gradient">Videorounds</span><br>
-                in<br>
-                Movement Disorders
-              </h2>
-
-              <p class="hero-desc">
-                Accesso rapido a prossimo incontro, casi clinici, archivio scientifico, network dei centri e strumenti di partecipazione, in una struttura elegante e coerente con il marchio Videorounds.
-              </p>
-
-              <div class="cta-grid">
-                <button class="btn primary" data-go="prossimo">Prossimo incontro</button>
-                <button class="btn" data-go="casi">Casi clinici</button>
-                <button class="btn" data-go="archivio">Archivio</button>
-                <button class="btn" data-go="network">Network</button>
-                <button class="btn full" data-go="partecipa">Partecipa</button>
-              </div>
-            </div>
-
-            <div>
-              <div class="hero-logo-card">
-                <img
-                  src="videorounds-logo.png"
-                  alt="Videorounds in Movement Disorders"
-                  class="hero-logo-card-img"
-                  onerror="this.style.display='none'; document.getElementById('heroLogoFallback').style.display='block';"
-                />
-                <div id="heroLogoFallback" class="hero-logo-fallback" style="display:none;">
-                  Videorounds in Movement Disorders
-                </div>
-              </div>
-
-              <div style="height:12px"></div>
-
-              <div class="home-summary">
-                <div class="stat-mini">
-                  <div class="label">Data</div>
-                  <div id="homeDate" class="value">In aggiornamento</div>
-                </div>
-                <div class="stat-mini">
-                  <div class="label">Sede</div>
-                  <div id="homeVenue" class="value">Da definire</div>
-                </div>
-                <div class="stat-mini">
-                  <div class="label">Focus</div>
-                  <div id="homeFocus" class="value">Nuovi casi in selezione</div>
-                </div>
-                <div class="stat-mini big">
-                  <div class="label">Iscritti</div>
-                  <div id="homeRegistrations" class="value">0</div>
-                </div>
-              </div>
-
-              <div style="height:10px"></div>
-
-              <div class="progress-card">
-                <div class="progress-top">
-                  <span>Disponibilità posti</span>
-                  <strong id="homeAvailability">0 / 0</strong>
-                </div>
-                <div class="track">
-                  <div id="homeFill" class="fill" style="width:0%"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="section-head">
-          <div>
-            <h3>In evidenza</h3>
-            <p>Le informazioni più utili in apertura</p>
-          </div>
-        </div>
-
-        <div class="compact-grid">
-          <div class="surface">
-            <div class="metrics">
-              <div class="metric">
-                <div class="label">Data</div>
-                <div id="homeDateMini" class="value">In aggiornamento</div>
-              </div>
-              <div class="metric">
-                <div class="label">Sede</div>
-                <div id="homeVenueMini" class="value">Da definire</div>
-              </div>
-              <div class="metric">
-                <div class="label">Focus</div>
-                <div id="homeFocusMini" class="value">Nuovi casi in selezione</div>
-              </div>
-              <div class="metric counter">
-                <div class="label">Iscritti</div>
-                <div id="homeRegistrationsMini" class="value">0</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="section-head">
-          <div>
-            <h3>Accesso rapido</h3>
-            <p>Schermate principali in stile vera app</p>
-          </div>
-        </div>
-
-        <div class="quick-grid">
-          <div class="feature-card" data-go="prossimo">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v5l3 2"></path></svg>
-            </div>
-            <div class="feature-copy">
-              <h4>Prossimo incontro</h4>
-              <p class="subcopy">Data, sede, focus e disponibilità in una schermata dedicata.</p>
-            </div>
-          </div>
-
-          <div class="feature-card" data-go="casi">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2"></rect><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
-            </div>
-            <div class="feature-copy">
-              <h4>Casi clinici</h4>
-              <p class="subcopy">Dettagli rapidi dei casi del prossimo Videoround.</p>
-            </div>
-          </div>
-
-          <div class="feature-card" data-go="archivio">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24"><path d="M4 7h16"></path><rect x="4" y="5" width="16" height="14" rx="2"></rect><path d="M8 11h8"></path><path d="M8 15h6"></path></svg>
-            </div>
-            <div class="feature-copy">
-              <h4>Archivio</h4>
-              <p class="subcopy">Ricerca per titolo, relatore, codice o centro con filtri.</p>
-            </div>
-          </div>
-
-          <div class="feature-card" data-go="network">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19 12a7 7 0 0 0-7-7"></path><path d="M5 12a7 7 0 0 1 7-7"></path><path d="M19 12a7 7 0 0 1-7 7"></path><path d="M5 12a7 7 0 0 0 7 7"></path></svg>
-            </div>
-            <div class="feature-copy">
-              <h4>Network</h4>
-              <p class="subcopy">Mappa dei centri e accesso diretto alle sedi partecipanti.</p>
-            </div>
-          </div>
-
-          <div class="feature-card" data-go="partecipa">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
-            </div>
-            <div class="feature-copy">
-              <h4>Partecipa</h4>
-              <p class="subcopy">Modulo iscrizione, proposta caso e newsletter.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="page" data-page="prossimo">
-        <div class="section-head">
-          <div>
-            <h3>Prossimo incontro</h3>
-            <p>Vista sintetica e più raffinata</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="metrics">
-            <div class="metric">
-              <div class="label">Data</div>
-              <div id="nextDate" class="value">In aggiornamento</div>
-            </div>
-            <div class="metric">
-              <div class="label">Sede</div>
-              <div id="nextVenue" class="value">Da definire</div>
-            </div>
-          </div>
-
-          <div style="height:10px"></div>
-
-          <div class="next-focus">
-            <div class="label">Focus scientifico</div>
-            <div id="nextFocus" class="value">Nuovi casi in selezione</div>
-          </div>
-
-          <div style="height:10px"></div>
-
-          <div class="metrics">
-            <div class="metric counter">
-              <div class="label">Iscritti</div>
-              <div id="registrationsCount" class="value">0</div>
-            </div>
-            <div class="metric">
-              <div class="label">Disponibilità</div>
-              <div id="availabilityText" class="value">0 / 0</div>
-            </div>
-          </div>
-
-          <div style="height:10px"></div>
-
-          <div class="progress-card">
-            <div class="progress-top">
-              <span>Stato posti</span>
-              <strong id="availabilityLabel">Capienza aggiornata</strong>
-            </div>
-            <div class="track">
-              <div id="availabilityBar" class="fill" style="width:0%"></div>
-            </div>
-          </div>
-
-          <div style="height:12px"></div>
-
-          <div class="cta-grid">
-            <a id="btnIscrizioneMain" class="btn primary" href="#" target="_blank" rel="noopener">Iscriviti</a>
-            <a id="btnMaterialiMain" class="btn" href="#" target="_blank" rel="noopener">Materiali</a>
-            <button class="btn" data-go="casi">Apri casi</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="page" data-page="casi">
-        <div class="section-head">
-          <div>
-            <h3>Casi clinici</h3>
-            <p>I casi del prossimo Videoround</p>
-          </div>
-        </div>
-        <div id="casesGrid" class="list"></div>
-      </section>
-
-      <section class="page" data-page="archivio">
-        <div class="section-head">
-          <div>
-            <h3>Archivio</h3>
-            <p>Ricerca e filtri sui casi scientifici</p>
-          </div>
-        </div>
-
-        <div class="tool-row">
-          <input id="searchInput" type="text" placeholder="Cerca per titolo, relatore, codice o centro" />
-          <select id="vrFilter"><option value="">Tutti i VR</option></select>
-          <select id="centerFilter"><option value="">Tutti i centri</option></select>
-        </div>
-
-        <div class="tool-row single">
-          <select id="speakerFilter"><option value="">Tutti i relatori</option></select>
-        </div>
-
-        <div id="archiveList" class="list"></div>
-      </section>
-
-      <section class="page" data-page="network">
-        <div class="section-head">
-          <div>
-            <h3>Network</h3>
-            <p>Centri partecipanti e mappa</p>
-          </div>
-        </div>
-
-        <div class="map-box">
-          <iframe id="mapFrame" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Roma&output=embed"></iframe>
-        </div>
-
-        <div style="height:14px"></div>
-        <div id="centriGrid" class="list"></div>
-      </section>
-
-      <section class="page" data-page="partecipa">
-        <div class="section-head">
-          <div>
-            <h3>Partecipa</h3>
-            <p>Accesso rapido ai moduli principali</p>
-          </div>
-        </div>
-
-        <div class="participa-grid">
-          <div class="participa-card">
-            <h4>Iscriviti</h4>
-            <p class="subcopy">Registrazione al prossimo appuntamento.</p>
-            <div class="center-actions">
-              <a id="btnIscrizione" class="btn primary" href="#" target="_blank" rel="noopener">Vai al modulo</a>
-            </div>
-          </div>
-
-          <div class="participa-card">
-            <h4>Proponi un caso</h4>
-            <p class="subcopy">Invia un caso clinico al board scientifico.</p>
-            <div class="center-actions">
-              <a id="btnProponiCaso" class="btn" href="#" target="_blank" rel="noopener">Invia caso</a>
-            </div>
-          </div>
-
-          <div class="participa-card">
-            <h4>Newsletter</h4>
-            <p class="subcopy">Ricevi date, aggiornamenti e materiali.</p>
-            <div class="center-actions">
-              <a id="btnNewsletter" class="btn" href="#" target="_blank" rel="noopener">Iscriviti</a>
-            </div>
-          </div>
-
-          <div class="participa-card">
-            <h4>Archivio completo</h4>
-            <p class="subcopy">Consulta rapidamente tutto lo storico scientifico.</p>
-            <div class="center-actions">
-              <button class="btn" data-go="archivio">Apri archivio</button>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <nav class="bottom-nav">
-      <div class="nav-wrap">
-        <button class="nav-btn active" data-nav="home">
-          <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 11.5 12 5l8 6.5"></path><path d="M6.5 10.5V19h11v-8.5"></path></svg></div>
-          <span>Home</span>
-        </button>
-        <button class="nav-btn" data-nav="prossimo">
-          <div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v5l3 2"></path></svg></div>
-          <span>Prossimo</span>
-        </button>
-        <button class="nav-btn" data-nav="casi">
-          <div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2"></rect><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg></div>
-          <span>Casi</span>
-        </button>
-        <button class="nav-btn" data-nav="archivio">
-          <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16"></path><rect x="4" y="5" width="16" height="14" rx="2"></rect><path d="M8 11h8"></path><path d="M8 15h6"></path></svg></div>
-          <span>Archivio</span>
-        </button>
-        <button class="nav-btn" data-nav="network">
-          <div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19 12a7 7 0 0 0-7-7"></path><path d="M5 12a7 7 0 0 1 7-7"></path><path d="M19 12a7 7 0 0 1-7 7"></path><path d="M5 12a7 7 0 0 0 7 7"></path></svg></div>
-          <span>Network</span>
-        </button>
-        <button class="nav-btn" data-nav="partecipa">
-          <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></div>
-          <span>Partecipa</span>
-        </button>
-      </div>
-    </nav>
-  </div>
-
-  <div id="caseModalBackdrop" class="modal-backdrop">
-    <div class="modal">
-      <div class="modal-top">
-        <div>
-          <div id="modalBadge" class="tag">VR</div>
-          <h3 id="modalTitle">Caso clinico</h3>
-        </div>
-        <button id="closeModalBtn" class="close-btn">Chiudi</button>
-      </div>
-      <div id="modalMeta" class="meta" style="margin-top:14px"></div>
-      <div id="modalLinks" class="center-actions"></div>
+  <div class="hero">
+    <img class="hero-logo" src="videorounds-logo.png" alt="VideoRounds logo" onerror="this.style.display='none'">
+    <div class="hero-wordmark">
+      <span class="brand">VideoRounds</span>
+      <span class="sub">in Movement Disorders</span>
+    </div>
+    <p class="hero-desc">Piattaforma scientifica per la discussione di casi clinici nei disturbi del movimento.</p>
+    <div class="quick-grid">
+      <button class="quick-btn" onclick="navigateTo('Prossimo')"><span class="icon">📅</span> Prossimo</button>
+      <button class="quick-btn" onclick="navigateTo('Casi')"><span class="icon">🧠</span> Casi clinici</button>
+      <button class="quick-btn" onclick="navigateTo('Archivio')"><span class="icon">🗂️</span> Archivio</button>
+      <button class="quick-btn" onclick="navigateTo('Network')"><span class="icon">🏥</span> Network</button>
+      <button class="quick-btn wide" onclick="navigateTo('Partecipa')"><span class="icon">✋</span> Partecipa al prossimo incontro</button>
     </div>
   </div>
 
-  <script>
-    const SHEET_ID = '1zE4Yfw0CqKnu_IKu_J_D4-NmrzNwYF0NYjEZ6XdKuX0';
-    const GIDS = {
-      EVENTI:'542281569',
-      CASI:'625293273',
-      CENTRI:'1823139789',
-      ISCRIZIONI:'1956086220'
-    };
-    const DEFAULT_FORM_LINK = 'https://docs.google.com/forms/d/e/1FAIpQLScRT3WXM4d8Q1JzFKCzdHddue1ykesaIuUsoGHty41QbPWrkA/viewform';
+  <div class="section" id="home-event-card">
+    <div class="section-label">In evidenza</div>
+    <h2>Prossimo Videoround</h2>
+    <div class="loading-pulse"><div class="skeleton tall"></div></div>
+  </div>
 
-    const state = {
-      eventi:[],
-      casi:[],
-      centri:[],
-      iscrizioni:[]
-    };
+  <div class="section">
+    <div class="section-label">La piattaforma</div>
+    <div class="stats">
+      <div class="stat"><div class="val">10</div><div class="lbl">Incontri</div></div>
+      <div class="stat"><div class="val" id="stat-casi">—</div><div class="lbl">Casi</div></div>
+      <div class="stat"><div class="val">—</div><div class="lbl">Centri</div></div>
+      <div class="stat"><div class="val">—</div><div class="lbl">Neurologi</div></div>
+    </div>
+  </div>
 
-    const els = {
-      statusChip: document.getElementById('statusChip'),
+</div>
+</div>
 
-      homeDate: document.getElementById('homeDate'),
-      homeVenue: document.getElementById('homeVenue'),
-      homeFocus: document.getElementById('homeFocus'),
-      homeRegistrations: document.getElementById('homeRegistrations'),
-      homeAvailability: document.getElementById('homeAvailability'),
-      homeFill: document.getElementById('homeFill'),
-
-      homeDateMini: document.getElementById('homeDateMini'),
-      homeVenueMini: document.getElementById('homeVenueMini'),
-      homeFocusMini: document.getElementById('homeFocusMini'),
-      homeRegistrationsMini: document.getElementById('homeRegistrationsMini'),
-
-      nextDate: document.getElementById('nextDate'),
-      nextVenue: document.getElementById('nextVenue'),
-      nextFocus: document.getElementById('nextFocus'),
-      registrationsCount: document.getElementById('registrationsCount'),
-      availabilityText: document.getElementById('availabilityText'),
-      availabilityBar: document.getElementById('availabilityBar'),
-      availabilityLabel: document.getElementById('availabilityLabel'),
-
-      casesGrid: document.getElementById('casesGrid'),
-      archiveList: document.getElementById('archiveList'),
-      centriGrid: document.getElementById('centriGrid'),
-      mapFrame: document.getElementById('mapFrame'),
-
-      searchInput: document.getElementById('searchInput'),
-      vrFilter: document.getElementById('vrFilter'),
-      centerFilter: document.getElementById('centerFilter'),
-      speakerFilter: document.getElementById('speakerFilter'),
-
-      btnIscrizione: document.getElementById('btnIscrizione'),
-      btnIscrizioneMain: document.getElementById('btnIscrizioneMain'),
-      btnMaterialiMain: document.getElementById('btnMaterialiMain'),
-      btnProponiCaso: document.getElementById('btnProponiCaso'),
-      btnNewsletter: document.getElementById('btnNewsletter'),
-
-      caseModalBackdrop: document.getElementById('caseModalBackdrop'),
-      closeModalBtn: document.getElementById('closeModalBtn'),
-      modalBadge: document.getElementById('modalBadge'),
-      modalTitle: document.getElementById('modalTitle'),
-      modalMeta: document.getElementById('modalMeta'),
-      modalLinks: document.getElementById('modalLinks')
-    };
-
-    function setStatus(msg){
-      els.statusChip.textContent = msg;
-    }
-
-    function setPage(name){
-      document.querySelectorAll('.page').forEach(page => {
-        page.classList.toggle('active', page.dataset.page === name);
-      });
-
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.nav === name);
-      });
-
-      const pages = document.querySelector('.pages');
-      if (pages) pages.scrollTo({ top:0, behavior:'smooth' });
-    }
-
-    function normalizeKey(str=''){
-      return String(str)
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g,'')
-        .replace(/[^a-zA-Z0-9]+/g,'_')
-        .replace(/^_+|_+$/g,'')
-        .toUpperCase();
-    }
-
-    function parseCSV(text){
-      const rows = [];
-      let row = [];
-      let cell = '';
-      let inQuotes = false;
-
-      for(let i=0; i<text.length; i++){
-        const char = text[i];
-        const next = text[i+1];
-
-        if(char === '"'){
-          if(inQuotes && next === '"'){
-            cell += '"';
-            i++;
-          } else {
-            inQuotes = !inQuotes;
-          }
-        } else if(char === ',' && !inQuotes){
-          row.push(cell);
-          cell = '';
-        } else if((char === '\n' || char === '\r') && !inQuotes){
-          if(char === '\r' && next === '\n') i++;
-          row.push(cell);
-          if(row.some(v => String(v).trim() !== '')) rows.push(row);
-          row = [];
-          cell = '';
-        } else {
-          cell += char;
-        }
-      }
-
-      if(cell.length || row.length){
-        row.push(cell);
-        if(row.some(v => String(v).trim() !== '')) rows.push(row);
-      }
-
-      if(!rows.length) return [];
-
-      const headers = rows[0].map(h => normalizeKey(h));
-      return rows.slice(1).map(r => {
-        const obj = {};
-        headers.forEach((h, idx) => {
-          obj[h] = (r[idx] || '').trim();
-        });
-        return obj;
-      });
-    }
-
-    async function fetchSheetByGid(gid){
-      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${gid}`;
-      const res = await fetch(url, { cache:'no-store' });
-      if(!res.ok) throw new Error('Errore lettura sheet gid ' + gid);
-      return parseCSV(await res.text());
-    }
-
-    function getFirst(obj, keys, fallback=''){
-      for(const key of keys){
-        if(obj && obj[key] !== undefined && String(obj[key]).trim() !== ''){
-          return String(obj[key]).trim();
-        }
-      }
-      return fallback;
-    }
-
-    function parseItalianDate(str){
-      if(!str) return null;
-      const s = String(str).trim();
-
-      if(/^\d{4}-\d{2}-\d{2}/.test(s)){
-        const d = new Date(s);
-        return isNaN(d) ? null : d;
-      }
-
-      const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
-      if(m){
-        const year = m[3].length === 2 ? '20' + m[3] : m[3];
-        const d = new Date(Number(year), Number(m[2]) - 1, Number(m[1]));
-        return isNaN(d) ? null : d;
-      }
-
-      return null;
-    }
-
-    function formatDateIT(date){
-      if(!(date instanceof Date) || isNaN(date)) return 'In aggiornamento';
-      return date.toLocaleDateString('it-IT', {
-        day:'2-digit',
-        month:'long',
-        year:'numeric'
-      });
-    }
-
-    function uniqueSorted(values){
-      return [...new Set(values.filter(Boolean))].sort((a,b) => a.localeCompare(b,'it'));
-    }
-
-    function fillSelect(select, values, defaultLabel){
-      select.innerHTML = `<option value="">${defaultLabel}</option>`;
-      uniqueSorted(values).forEach(v => {
-        const op = document.createElement('option');
-        op.value = v;
-        op.textContent = v;
-        select.appendChild(op);
-      });
-    }
-
-    function escapeHtml(value=''){
-      return String(value)
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;')
-        .replace(/'/g,'&#039;');
-    }
-
-    function escapeAttr(value=''){
-      return escapeHtml(value);
-    }
-
-    function normalizeCaseRow(row){
-      return {
-        vr: getFirst(row,['ID_EVENTO','VIDEOROUND','VR','EVENTO'],'VR'),
-        code: getFirst(row,['CODICE_CASO','CODICE_CASOO','CODICE','ID_CASO'],'—'),
-        title: getFirst(row,['TITOLO','TITOLO_CASO','CASO'],'Titolo non disponibile'),
-        speaker: getFirst(row,['PRESENTAZIONE','RELATORE','SPEAKER','PRESENTATORE'],'Relatore non indicato'),
-        center: getFirst(row,['CENTRO','SEDE','OSPEDALE','LUOGO'],'Centro non indicato'),
-        topic: getFirst(row,['TEMA','TOPIC','ARGOMENTO'],''),
-        status: getFirst(row,['STATO','STATUS','ESITO'],''),
-        notes: getFirst(row,['NOTE','DESCRIZIONE','ABSTRACT'],''),
-        link: getFirst(row,['LINK','LINK_MATERIALI','MATERIALI'],''),
-        raw: row
-      };
-    }
-
-    function openCaseModal(item){
-      els.modalBadge.textContent = item.vr || 'VR';
-      els.modalTitle.textContent = `${item.code} · ${item.title}`;
-      els.modalMeta.innerHTML = `
-        <strong>Relatore:</strong> ${escapeHtml(item.speaker)}<br>
-        <strong>Centro:</strong> ${escapeHtml(item.center)}<br>
-        ${item.topic ? `<strong>Tema:</strong> ${escapeHtml(item.topic)}<br>` : ''}
-        ${item.status ? `<strong>Esito/Stato:</strong> ${escapeHtml(item.status)}<br>` : ''}
-        ${item.notes ? `<br>${escapeHtml(item.notes)}` : ''}
-      `;
-      els.modalLinks.innerHTML = item.link
-        ? `<a class="mini-btn green" href="${escapeAttr(item.link)}" target="_blank" rel="noopener">Apri materiali</a>`
-        : '';
-      els.caseModalBackdrop.classList.add('show');
-    }
-
-    function closeCaseModal(){
-      els.caseModalBackdrop.classList.remove('show');
-    }
-
-    function getNormalizedEvents(){
-      return state.eventi.map(ev => {
-        const rawDate = getFirst(ev,['DATA','DATA_EVENTO','DATE']);
-        return {
-          raw:ev,
-          date: parseItalianDate(rawDate),
-          title: getFirst(ev,['TITOLO','TEMA','FOCUS','ARGOMENTO'],'Videoround'),
-          venue: getFirst(ev,['LUOGO','SEDE','CENTRO','LOCATION'],'Da definire'),
-          registrationLink: getFirst(ev,['LINK_ISCRIZIONE','LINK_ISCRIZ','ISCRIZIONE_LINK'], DEFAULT_FORM_LINK),
-          materialsLink: getFirst(ev,['LINK_MATERIALI','LINK_MATE','MATERIALI_LINK'],'#'),
-          caseFormLink: getFirst(ev,['LINK_CANDIDATURA','LINK_CASO','FORM_CASI'], DEFAULT_FORM_LINK),
-          newsletterLink: getFirst(ev,['LINK_NEWSLETTER','NEWSLETTER_LINK'], DEFAULT_FORM_LINK),
-          posti: Number(getFirst(ev,['POSTI','POSTI_TOTALI','MAX_POSTI'],'15')) || 15,
-          iscritti: Number(getFirst(ev,['ISCRITTI','N_ISCRITTI'], String(state.iscrizioni.length))) || state.iscrizioni.length
-        };
-      }).sort((a,b) => {
-        const ta = a.date ? a.date.getTime() : Number.MAX_SAFE_INTEGER;
-        const tb = b.date ? b.date.getTime() : Number.MAX_SAFE_INTEGER;
-        return ta - tb;
-      });
-    }
-
-    function renderNextEvent(){
-      const events = getNormalizedEvents();
-      const now = new Date();
-
-      const upcoming = events.find(e =>
-        e.date && e.date >= new Date(now.getFullYear(), now.getMonth(), now.getDate())
-      ) || events[0];
-
-      if(!upcoming) return;
-
-      const posti = Math.max(upcoming.posti, 1);
-      const iscritti = Math.max(upcoming.iscritti, state.iscrizioni.length);
-      const usedPercent = Math.min((iscritti / posti) * 100, 100);
-      const available = Math.max(posti - iscritti, 0);
-
-      [els.homeDate, els.nextDate, els.homeDateMini].forEach(el => { if(el) el.textContent = formatDateIT(upcoming.date); });
-      [els.homeVenue, els.nextVenue, els.homeVenueMini].forEach(el => { if(el) el.textContent = upcoming.venue; });
-      [els.homeFocus, els.nextFocus, els.homeFocusMini].forEach(el => { if(el) el.textContent = upcoming.title; });
-      [els.homeRegistrations, els.registrationsCount, els.homeRegistrationsMini].forEach(el => { if(el) el.textContent = String(iscritti); });
-      [els.homeAvailability, els.availabilityText].forEach(el => { if(el) el.textContent = `${available} / ${posti}`; });
-      [els.homeFill, els.availabilityBar].forEach(el => { if(el) el.style.width = `${usedPercent}%`; });
-
-      if(els.availabilityLabel){
-        els.availabilityLabel.textContent = available > 0 ? `${available} posti disponibili` : 'Posti esauriti';
-      }
-
-      els.btnIscrizione.href = upcoming.registrationLink || DEFAULT_FORM_LINK;
-      els.btnIscrizioneMain.href = upcoming.registrationLink || DEFAULT_FORM_LINK;
-      els.btnMaterialiMain.href = upcoming.materialsLink || '#';
-      els.btnProponiCaso.href = upcoming.caseFormLink || DEFAULT_FORM_LINK;
-      els.btnNewsletter.href = upcoming.newsletterLink || DEFAULT_FORM_LINK;
-    }
-
-    function renderCasesPreview(){
-      const normalized = state.casi.map(normalizeCaseRow);
-      const targetVr = normalized[normalized.length - 1]?.vr || '';
-      const preview = normalized.filter(c => !targetVr || c.vr === targetVr).slice(0, 6);
-
-      if(!preview.length){
-        els.casesGrid.innerHTML = '<div class="empty">Nessun caso disponibile</div>';
-        return;
-      }
-
-      els.casesGrid.innerHTML = preview.map((c,i) => `
-        <div class="case-card">
-          <div class="case-code">${escapeHtml(c.code)}</div>
-          <div class="case-title">${escapeHtml(c.title)}</div>
-          <p class="meta">${escapeHtml(c.speaker)}${c.center ? ' · ' + escapeHtml(c.center) : ''}</p>
-          <div class="tag-row">
-            ${c.topic ? `<div class="tag">${escapeHtml(c.topic)}</div>` : ''}
-            ${c.vr ? `<div class="tag">${escapeHtml(c.vr)}</div>` : ''}
-            ${c.status ? `<div class="tag">${escapeHtml(c.status)}</div>` : ''}
-          </div>
-          <div class="item-actions">
-            <button class="mini-btn green" data-preview-index="${i}">Dettagli</button>
-            ${c.link ? `<a class="mini-btn" href="${escapeAttr(c.link)}" target="_blank" rel="noopener">Materiali</a>` : ''}
-          </div>
+<!-- ═══════════════════ PAGE: PROSSIMO ═══════════════════ -->
+<div id="page-Prossimo" class="page">
+  <div class="page-header"><h2>Prossimo Videoround</h2></div>
+  <div class="scroll" style="padding-top:8px">
+    <div id="prossimo-content">
+      <div class="section">
+        <div class="loading-pulse">
+          <div class="skeleton tall"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton short"></div>
         </div>
-      `).join('');
+      </div>
+    </div>
+  </div>
+</div>
 
-      preview.forEach((item,i) => {
-        const btn = els.casesGrid.querySelector(`[data-preview-index="${i}"]`);
-        if(btn) btn.addEventListener('click', () => openCaseModal(item));
-      });
-    }
+<!-- ═══════════════════ PAGINE PLACEHOLDER ═══════════════════ -->
+<div id="page-Casi" class="page">
+  <div class="page-header"><h2>Casi Clinici</h2></div>
+  <div class="scroll" style="padding-top:8px">
+    <div class="section"><div class="error-box"><div class="error-icon">🧠</div><p>Sezione in sviluppo.</p></div></div>
+  </div>
+</div>
 
-    function renderArchive(){
-      const q = els.searchInput.value.trim().toLowerCase();
-      const vr = els.vrFilter.value;
-      const center = els.centerFilter.value;
-      const speaker = els.speakerFilter.value;
+<div id="page-Archivio" class="page">
+  <div class="page-header"><h2>Archivio</h2></div>
+  <div class="scroll" style="padding-top:8px">
+    <div class="section"><div class="error-box"><div class="error-icon">🗂️</div><p>Sezione in sviluppo.</p></div></div>
+  </div>
+</div>
 
-      const normalized = state.casi.map(normalizeCaseRow);
-      const filtered = normalized.filter(item => {
-        const hay = [item.vr,item.code,item.title,item.speaker,item.center,item.topic,item.status,item.notes].join(' ').toLowerCase();
-        return (!q || hay.includes(q)) &&
-               (!vr || item.vr === vr) &&
-               (!center || item.center === center) &&
-               (!speaker || item.speaker === speaker);
-      });
+<div id="page-Network" class="page">
+  <div class="page-header"><h2>Network</h2></div>
+  <div class="scroll" style="padding-top:8px">
+    <div class="section"><div class="error-box"><div class="error-icon">🏥</div><p>Sezione in sviluppo.</p></div></div>
+  </div>
+</div>
 
-      if(!filtered.length){
-        els.archiveList.innerHTML = '<div class="empty">Nessun risultato</div>';
-        return;
-      }
+<div id="page-Partecipa" class="page">
+  <div class="page-header"><h2>Partecipa</h2></div>
+  <div class="scroll" style="padding-top:8px">
+    <div class="section"><div class="error-box"><div class="error-icon">✋</div><p>Sezione in sviluppo.</p></div></div>
+  </div>
+</div>
 
-      els.archiveList.innerHTML = filtered.map((item,idx) => `
-        <div class="archive-item">
-          <div class="archive-code">${escapeHtml(item.code)}</div>
-          <div class="archive-title">${escapeHtml(item.title)}</div>
-          <p class="meta">
-            <strong>Relatore:</strong> ${escapeHtml(item.speaker)}<br>
-            <strong>Centro:</strong> ${escapeHtml(item.center)}
-            ${item.topic ? `<br><strong>Tema:</strong> ${escapeHtml(item.topic)}` : ''}
-            ${item.status ? `<br><strong>Stato:</strong> ${escapeHtml(item.status)}` : ''}
-          </p>
-          <div class="item-actions">
-            <button class="mini-btn" data-archive-index="${idx}">Dettagli</button>
-            ${item.link ? `<a class="mini-btn green" href="${escapeAttr(item.link)}" target="_blank" rel="noopener">Materiali</a>` : ''}
-          </div>
+<!-- ═══════════════════ BOTTOM NAV ═══════════════════ -->
+<nav class="bottom-nav">
+  <div class="nav-item active" onclick="navigateTo('Home')">
+    <span class="nav-icon">🏠</span><span class="nav-label">Home</span>
+  </div>
+  <div class="nav-item" onclick="navigateTo('Prossimo')">
+    <span class="nav-icon">📅</span><span class="nav-label">Prossimo</span>
+  </div>
+  <div class="nav-item" onclick="navigateTo('Casi')">
+    <span class="nav-icon">🧠</span><span class="nav-label">Casi</span>
+  </div>
+  <div class="nav-item" onclick="navigateTo('Archivio')">
+    <span class="nav-icon">🗂️</span><span class="nav-label">Archivio</span>
+  </div>
+  <div class="nav-item" onclick="navigateTo('Network')">
+    <span class="nav-icon">🏥</span><span class="nav-label">Network</span>
+  </div>
+  <div class="nav-item" onclick="navigateTo('Partecipa')">
+    <span class="nav-icon">✋</span><span class="nav-label">Partecipa</span>
+  </div>
+</nav>
+
+<!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
+<script>
+
+// ── CONFIG ──────────────────────────────────────────────
+const SHEET_ID   = '1zE4Yfw0CqKnu_IKu_J_D4-NmrzNwYF0NYjEZ6XdKuX0';
+const GID_EVENTI = '542281569';
+
+// Indici colonne (0-based): A=0 ID_EVENTO, B=1 NUMERO_VR, C=2 DATA, D=3 ORA,
+// E=4 SEDE, F=5 CITTA, G=6 FOCUS, H=7 RELATORI, I=8 NUMERO_CASI,
+// J=9 LINK_ISCRIZIONE, K=10 LINK_MATERIALI, L=11 NOTE
+const COL = { ID:0, NUMERO_VR:1, DATA:2, ORA:3, SEDE:4, CITTA:5, FOCUS:6, RELATORI:7, NUMERO_CASI:8, LINK_ISCRIZIONE:9, LINK_MATERIALI:10, NOTE:11 };
+
+// ── NAVIGAZIONE ─────────────────────────────────────────
+function navigateTo(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el =>
+    el.classList.toggle('active', el.querySelector('.nav-label').textContent === name)
+  );
+  const page = document.getElementById('page-' + name);
+  if (page) { page.classList.add('active'); window.scrollTo(0, 0); }
+}
+
+// ── FETCH SHEET ─────────────────────────────────────────
+async function fetchSheet(gid) {
+  const url  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`;
+  const res  = await fetch(url);
+  const text = await res.text();
+  const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/)[1]);
+  return json.table;
+}
+
+function rowToObj(row) {
+  const get = i => (row.c[i] && row.c[i].v !== null) ? row.c[i].v : '';
+  return {
+    numero_vr:       get(COL.NUMERO_VR),
+    data:            get(COL.DATA),
+    ora:             get(COL.ORA),
+    sede:            get(COL.SEDE),
+    citta:           get(COL.CITTA),
+    focus:           get(COL.FOCUS),
+    relatori:        get(COL.RELATORI),
+    numero_casi:     get(COL.NUMERO_CASI),
+    link_iscrizione: get(COL.LINK_ISCRIZIONE),
+    link_materiali:  get(COL.LINK_MATERIALI),
+    note:            get(COL.NOTE),
+  };
+}
+
+// ── DATE UTILS ──────────────────────────────────────────
+function parseGvizDate(val) {
+  if (!val) return null;
+  if (typeof val === 'string') {
+    const m = val.match(/Date\((\d+),(\d+),(\d+)\)/);
+    if (m) return new Date(+m[1], +m[2], +m[3]);
+  }
+  return null;
+}
+
+function formatData(val) {
+  const d = parseGvizDate(val);
+  if (!d) return val || '—';
+  return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function formatOra(val) {
+  if (!val && val !== 0) return '—';
+  if (typeof val === 'number') {
+    if (val < 24) return `${Math.floor(val)}:00`;
+    const h = Math.floor(val * 24);
+    const m = Math.round((val * 24 - h) * 60);
+    return `${h}:${m.toString().padStart(2,'0')}`;
+  }
+  return val;
+}
+
+// ── COUNTDOWN ───────────────────────────────────────────
+function buildCountdown(dataVal) {
+  const eventDate = parseGvizDate(dataVal);
+  if (!eventDate) return '';
+  const diff = eventDate - new Date();
+  if (diff < 0) return `<p style="color:var(--muted);font-size:13px;text-align:center;padding:8px 0">Evento concluso</p>`;
+  const days  = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const mins  = Math.floor((diff % 3600000) / 60000);
+  return `
+    <div class="countdown-row">
+      <div class="cd-box"><span class="cd-num">${days}</span><span class="cd-lbl">Giorni</span></div>
+      <div class="cd-box"><span class="cd-num">${hours}</span><span class="cd-lbl">Ore</span></div>
+      <div class="cd-box"><span class="cd-num">${mins}</span><span class="cd-lbl">Min</span></div>
+    </div>`;
+}
+
+// ── RENDER ──────────────────────────────────────────────
+function renderProssimo(ev) {
+  const relatori = ev.relatori ? ev.relatori.split(',').map(r => r.trim()).filter(Boolean) : [];
+  const chips    = relatori.length
+    ? `<div class="chips">${relatori.map(r => `<span class="chip">👤 ${r}</span>`).join('')}</div>`
+    : `<span style="color:var(--muted);font-size:13px">Non specificati</span>`;
+
+  const btnIscr = ev.link_iscrizione
+    ? `<a class="cta-btn" href="${ev.link_iscrizione}" target="_blank">✏️ Iscriviti all'incontro</a>`
+    : `<button class="cta-btn" style="opacity:.4;cursor:default" disabled>✏️ Iscrizioni non ancora aperte</button>`;
+
+  const btnMat = ev.link_materiali
+    ? `<a class="cta-btn secondary" href="${ev.link_materiali}" target="_blank">📂 Materiali</a>`
+    : '';
+
+  const noteHtml = ev.note
+    ? `<div class="section"><div class="section-label">Note</div><p style="font-size:14px;line-height:1.6;color:var(--muted)">${ev.note}</p></div>`
+    : '';
+
+  return `
+    <div class="section">
+      <div class="section-label">Videoround n° ${ev.numero_vr || '—'}</div>
+      ${buildCountdown(ev.data)}
+      <div class="info-row">
+        <span class="info-icon">📅</span>
+        <div class="info-body"><div class="info-label">Data</div><div class="info-value">${formatData(ev.data)}</div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">🕐</span>
+        <div class="info-body"><div class="info-label">Ora</div><div class="info-value">ore ${formatOra(ev.ora)}</div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">📍</span>
+        <div class="info-body"><div class="info-label">Sede</div><div class="info-value">${ev.sede || '—'}${ev.citta ? ' — ' + ev.citta : ''}</div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">🎯</span>
+        <div class="info-body"><div class="info-label">Focus</div><div class="info-value">${ev.focus || '—'}</div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">🧬</span>
+        <div class="info-body"><div class="info-label">Casi in discussione</div><div class="info-value">${ev.numero_casi || '—'}</div></div>
+      </div>
+      <div class="info-row" style="border-bottom:none">
+        <span class="info-icon">👥</span>
+        <div class="info-body"><div class="info-label">Relatori</div>${chips}</div>
+      </div>
+    </div>
+    <div class="section" style="padding:16px">
+      ${btnIscr}
+      ${btnMat}
+    </div>
+    ${noteHtml}
+  `;
+}
+
+function renderHomeCard(ev) {
+  const d      = parseGvizDate(ev.data);
+  const giorno = d ? d.getDate() : '—';
+  const mese   = d ? d.toLocaleDateString('it-IT', { month: 'short' }).replace('.','') : '';
+  return `
+    <div class="event-card">
+      <div class="event-date-badge">
+        <span class="day">${giorno}</span>
+        <span class="month">${mese}</span>
+      </div>
+      <div class="event-info">
+        <div class="event-title">Videoround n° ${ev.numero_vr || '—'}</div>
+        <div class="event-meta">
+          <span>📍 ${ev.sede || '—'}${ev.citta ? ' — ' + ev.citta : ''}</span>
+          <span>🕐 ore ${formatOra(ev.ora)}</span>
         </div>
-      `).join('');
+        <div class="pill" onclick="navigateTo('Prossimo')">Vedi dettagli →</div>
+      </div>
+    </div>`;
+}
 
-      filtered.forEach((item,idx) => {
-        const btn = els.archiveList.querySelector(`[data-archive-index="${idx}"]`);
-        if(btn) btn.addEventListener('click', () => openCaseModal(item));
-      });
-    }
+// ── INIT ────────────────────────────────────────────────
+async function init() {
+  try {
+    const table = await fetchSheet(GID_EVENTI);
+    if (!table || !table.rows || table.rows.length === 0) throw new Error('Nessun dato');
 
-    function renderCenters(){
-      const normalized = state.centri.map(row => ({
-        name: getFirst(row,['CENTRO','NOME','SEDE','OSPEDALE'],'Centro'),
-        city: getFirst(row,['CITTA','CITTÀ','CITY'],'Italia'),
-        maps: getFirst(row,['MAPS','LINK_MAPS','GOOGLE_MAPS'],''),
-        address: getFirst(row,['INDIRIZZO','ADDRESS'],''),
-        detail: getFirst(row,['DETTAGLI','LINK','URL'],'')
-      }));
+    const ev = rowToObj(table.rows[0]);
 
-      if(!normalized.length){
-        els.centriGrid.innerHTML = '<div class="empty">Nessun centro disponibile</div>';
-        return;
-      }
+    // Home card
+    document.getElementById('home-event-card').innerHTML =
+      `<div class="section-label">In evidenza</div>
+       <h2>Prossimo Videoround</h2>
+       ${renderHomeCard(ev)}`;
 
-      els.centriGrid.innerHTML = normalized.map((c,idx) => {
-        const mapsHref = c.maps || (
-          c.address
-            ? `https://maps.google.com/?q=${encodeURIComponent(c.address)}`
-            : `https://maps.google.com/?q=${encodeURIComponent(c.name + ' ' + c.city)}`
-        );
+    // Prossimo page
+    document.getElementById('prossimo-content').innerHTML = renderProssimo(ev);
 
-        const embedQuery = c.address || `${c.name} ${c.city}`;
+    // Stat
+    if (ev.numero_casi) document.getElementById('stat-casi').textContent = ev.numero_casi;
 
-        return `
-          <div class="center-card ${idx===0 ? 'active' : ''}" data-center-index="${idx}" data-embed-query="${escapeAttr(embedQuery)}">
-            <div class="center-title">${escapeHtml(c.name)}</div>
-            <p class="meta">${escapeHtml(c.city)}${c.address ? `<br>${escapeHtml(c.address)}` : ''}</p>
-            <div class="center-actions">
-              <a class="mini-btn" href="${escapeAttr(mapsHref)}" target="_blank" rel="noopener">Maps</a>
-              ${c.detail ? `<a class="mini-btn green" href="${escapeAttr(c.detail)}" target="_blank" rel="noopener">Dettagli</a>` : ''}
-            </div>
-          </div>
-        `;
-      }).join('');
+  } catch(err) {
+    console.error('Errore:', err);
+    const errHtml = `<div class="error-box"><div class="error-icon">⚠️</div><p>Impossibile caricare i dati.<br>Controlla la connessione.</p></div>`;
+    document.getElementById('home-event-card').innerHTML =
+      `<div class="section-label">In evidenza</div><h2>Prossimo Videoround</h2>${errHtml}`;
+    document.getElementById('prossimo-content').innerHTML = `<div class="section">${errHtml}</div>`;
+  }
+}
 
-      const first = normalized[0];
-      if(first){
-        const query = first.address || `${first.name} ${first.city}`;
-        els.mapFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
-      }
+init();
 
-      els.centriGrid.querySelectorAll('[data-center-index]').forEach(card => {
-        card.addEventListener('click', (e) => {
-          if(e.target.tagName === 'A') return;
-
-          els.centriGrid.querySelectorAll('.center-card').forEach(c => c.classList.remove('active'));
-          card.classList.add('active');
-
-          const query = card.getAttribute('data-embed-query') || 'Roma';
-          els.mapFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
-        });
-      });
-    }
-
-    function populateFilters(){
-      const normalized = state.casi.map(normalizeCaseRow);
-      fillSelect(els.vrFilter, normalized.map(c => c.vr), 'Tutti i VR');
-      fillSelect(els.centerFilter, normalized.map(c => c.center), 'Tutti i centri');
-      fillSelect(els.speakerFilter, normalized.map(c => c.speaker), 'Tutti i relatori');
-    }
-
-    function bindEvents(){
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.addEventListener('click', () => setPage(btn.dataset.nav));
-      });
-
-      document.querySelectorAll('[data-go]').forEach(el => {
-        el.addEventListener('click', () => setPage(el.dataset.go));
-      });
-
-      document.querySelectorAll('.feature-card[data-go]').forEach(card => {
-        card.addEventListener('click', () => setPage(card.dataset.go));
-      });
-
-      ['input','change'].forEach(evt => {
-        els.searchInput.addEventListener(evt, renderArchive);
-        els.vrFilter.addEventListener(evt, renderArchive);
-        els.centerFilter.addEventListener(evt, renderArchive);
-        els.speakerFilter.addEventListener(evt, renderArchive);
-      });
-
-      els.closeModalBtn.addEventListener('click', closeCaseModal);
-      els.caseModalBackdrop.addEventListener('click', e => {
-        if(e.target === els.caseModalBackdrop) closeCaseModal();
-      });
-
-      document.addEventListener('keydown', e => {
-        if(e.key === 'Escape') closeCaseModal();
-      });
-    }
-
-    async function init(){
-      try{
-        bindEvents();
-        setStatus('Caricamento dati');
-
-        const [eventi, casi, centri, iscrizioni] = await Promise.all([
-          fetchSheetByGid(GIDS.EVENTI),
-          fetchSheetByGid(GIDS.CASI),
-          fetchSheetByGid(GIDS.CENTRI),
-          fetchSheetByGid(GIDS.ISCRIZIONI)
-        ]);
-
-        state.eventi = eventi;
-        state.casi = casi;
-        state.centri = centri;
-        state.iscrizioni = iscrizioni;
-
-        populateFilters();
-        renderNextEvent();
-        renderCasesPreview();
-        renderArchive();
-        renderCenters();
-
-        setStatus(`${state.eventi.length} eventi · ${state.casi.length} casi`);
-      }catch(err){
-        console.error(err);
-        setStatus('Errore caricamento');
-      }
-    }
-
-    if('serviceWorker' in navigator){
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js').catch(() => {});
-      });
-    }
-
-    init();
-  </script>
+</script>
 </body>
 </html>
