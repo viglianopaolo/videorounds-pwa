@@ -894,14 +894,15 @@ function renderHomeCard(ev) {
 // ── NETWORK ──────────────────────────────────────────────
 // Coordinate fisse abbinate ai nomi ESATTI nel foglio CENTRI
 const CENTRI_COORDS = [
-  { nome: 'Sapienza',        full: 'Università La Sapienza',   addr: 'Viale dell\'Università, 30',       lat: 41.9026, lng: 12.5151 },
-  { nome: 'Campus Biomedico',full: 'Campus Bio-Medico',         addr: 'Via Alvaro del Portillo, 200',     lat: 41.8601, lng: 12.4308 },
-  { nome: 'Gemelli',         full: 'Policlinico Gemelli',       addr: 'Largo Agostino Gemelli, 8',        lat: 41.9297, lng: 12.4338 },
-  { nome: 'Tor Vergata',     full: 'Policlinico Tor Vergata',   addr: 'Viale Oxford, 81',                 lat: 41.8512, lng: 12.6067 },
-  { nome: 'S. Andrea',       full: 'Ospedale Sant\'Andrea',     addr: 'Via di Grottarossa, 1035',         lat: 41.9739, lng: 12.4718 },
-  { nome: 'San Filippo Neri',full: 'Ospedale San Filippo Neri', addr: 'Via Giovanni Martinotti, 20',      lat: 41.9419, lng: 12.4554 },
-  { nome: 'San Giovanni',    full: 'Ospedale San Giovanni',     addr: 'Via dell\'Amba Aradam, 8',         lat: 41.8858, lng: 12.5119 },
-  { nome: 'Sant\'Eugenio',   full: 'Ospedale Sant\'Eugenio',    addr: 'Piazzale dell\'Umanesimo, 10',     lat: 41.8396, lng: 12.4732 },
+  { nome: 'Fondazione Santa Lucia', full: 'Fondazione Santa Lucia', addr: 'Via Ardeatina, 306',             lat: 41.8393, lng: 12.5156 },
+  { nome: 'Sapienza',        full: 'Università La Sapienza',   addr: 'Viale dell\'Università, 30',       lat: 41.9013, lng: 12.5243 },
+  { nome: 'Campus Biomedico',full: 'Campus Bio-Medico',         addr: 'Via Alvaro del Portillo, 200',     lat: 41.8389, lng: 12.4347 },
+  { nome: 'Gemelli',         full: 'Policlinico Gemelli',       addr: 'Largo Agostino Gemelli, 8',        lat: 41.9308, lng: 12.4279 },
+  { nome: 'Tor Vergata',     full: 'Policlinico Tor Vergata',   addr: 'Viale Oxford, 81',                 lat: 41.8472, lng: 12.6189 },
+  { nome: 'S. Andrea',       full: 'Ospedale Sant\'Andrea',     addr: 'Via di Grottarossa, 1035',         lat: 41.9628, lng: 12.4891 },
+  { nome: 'San Filippo Neri',full: 'Ospedale San Filippo Neri', addr: 'Via Giovanni Martinotti, 20',      lat: 41.9447, lng: 12.4731 },
+  { nome: 'San Giovanni',    full: 'Ospedale San Giovanni',     addr: 'Via dell\'Amba Aradam, 8',         lat: 41.8836, lng: 12.5134 },
+  { nome: 'Sant\'Eugenio',   full: 'Ospedale Sant\'Eugenio',    addr: 'Piazzale dell\'Umanesimo, 10',     lat: 41.8456, lng: 12.4782 },
 ];
 
 async function initNetwork() {
