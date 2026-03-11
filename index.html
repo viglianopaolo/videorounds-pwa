@@ -1,578 +1,660 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#050d1f">
-
-<title>Videorounds in Movement Disorders</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-
-<style>
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg:      #050d1f;
-    --bg2:     #0b1835;
-    --surface: rgba(255,255,255,0.06);
-    --border:  rgba(255,255,255,0.10);
-    --accent:  #4a90e2;
-    --accent2: #7cb9ff;
-    --gold:    #c9a84c;
-    --text:    #e8eef8;
-    --muted:   rgba(232,238,248,0.50);
-    --nav-h:   80px;
-    --safe-b:  env(safe-area-inset-bottom, 0px);
-  }
-
-  html { background: var(--bg); }
-
-  body {
-    font-family: 'DM Sans', system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100dvh;
-    padding-bottom: calc(var(--nav-h) + var(--safe-b));
-    overflow-x: hidden;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    top: -20%; left: 50%;
-    transform: translateX(-50%);
-    width: 600px; height: 600px;
-    background: radial-gradient(ellipse, rgba(74,144,226,0.18) 0%, transparent 70%);
-    pointer-events: none; z-index: 0;
-  }
-
-  /* PAGE SYSTEM */
-  .page { display: none; }
-  .page.active { display: block; }
-
-  /* SCROLL */
-  .scroll {
-    position: relative; z-index: 1;
-    max-width: 480px; margin: 0 auto;
-    padding: 20px 16px 0;
-  }
-
-  /* PAGE HEADER */
-  .page-header {
-    display: flex; align-items: center; gap: 12px;
-    padding: 20px 16px 8px;
-    max-width: 480px; margin: 0 auto;
-    position: relative; z-index: 1;
-  }
-  .page-header h2 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 24px; font-weight: 400;
-  }
-
-  /* HERO */
-  .hero {
-    background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
-    border: 1px solid var(--border);
-    border-radius: 28px; padding: 36px 28px 32px;
-    text-align: center;
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    position: relative; overflow: hidden;
-    animation: fadeUp 0.5s ease both;
-  }
-  .hero::before {
-    content: ''; position: absolute;
-    top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  }
-  .hero-logo { max-width: 220px; width: 100%; margin-bottom: 24px; }
-  .hero-wordmark { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 16px; }
-  .hero-wordmark .brand {
-    font-family: 'DM Serif Display', serif; font-size: 28px; letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #ffffff, var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .hero-wordmark .sub {
-    font-size: 11px; font-weight: 500; letter-spacing: 2.5px;
-    text-transform: uppercase; color: var(--gold); opacity: 0.9;
-  }
-  .hero-desc { font-size: 14px; line-height: 1.6; color: var(--muted); max-width: 300px; margin: 0 auto 28px; }
-
-  /* QUICK GRID */
-  .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
-  .quick-btn {
-    display: flex; align-items: center; gap: 8px;
-    padding: 14px 16px; border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(255,255,255,0.07);
-    color: var(--text); font-family: 'DM Sans', sans-serif;
-    font-size: 13px; font-weight: 500; cursor: pointer;
-    transition: background 0.2s, transform 0.15s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .quick-btn:active { transform: scale(0.97); background: rgba(255,255,255,0.12); }
-  .quick-btn .icon { font-size: 18px; flex-shrink: 0; }
-  .quick-btn.wide {
-    grid-column: span 2;
-    background: linear-gradient(135deg, rgba(74,144,226,0.25), rgba(74,144,226,0.12));
-    border-color: rgba(74,144,226,0.35);
-    justify-content: center; font-size: 14px; font-weight: 600;
-  }
-
-  /* SECTION CARD */
-  .section {
-    margin-top: 16px;
-    background: linear-gradient(145deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
-    border: 1px solid var(--border);
-    border-radius: 24px; padding: 22px 20px;
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    position: relative; overflow: hidden;
-    animation: fadeUp 0.5s ease both;
-  }
-  .section::before {
-    content: ''; position: absolute;
-    top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  }
-  .section-label {
-    font-size: 10px; font-weight: 600; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--accent2); margin-bottom: 12px; opacity: 0.8;
-  }
-  .section h2 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 20px; font-weight: 400; margin-bottom: 14px;
-  }
-
-  /* EVENT CARD (home) */
-  .event-card { display: flex; gap: 14px; align-items: flex-start; }
-  .event-date-badge {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, var(--accent), #2d6bbf);
-    border-radius: 14px; padding: 10px 14px; min-width: 56px; flex-shrink: 0;
-  }
-  .event-date-badge .day { font-size: 22px; font-weight: 700; line-height: 1; }
-  .event-date-badge .month { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; opacity: 0.85; margin-top: 2px; }
-  .event-info { flex: 1; }
-  .event-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
-  .event-meta { font-size: 13px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
-  .event-meta span { display: flex; align-items: center; gap: 5px; }
-  .pill {
-    display: inline-flex; align-items: center; gap: 4px;
-    background: rgba(74,144,226,0.15); border: 1px solid rgba(74,144,226,0.3);
-    color: var(--accent2); border-radius: 20px; padding: 4px 10px;
-    font-size: 11px; font-weight: 600; margin-top: 10px; letter-spacing: 0.5px;
-    cursor: pointer;
-  }
-
-  /* STATS */
-  .stats { display: flex; }
-  .stat { flex: 1; text-align: center; padding: 12px 8px; border-right: 1px solid var(--border); }
-  .stat:last-child { border-right: none; }
-  .stat .val {
-    font-family: 'DM Serif Display', serif; font-size: 26px;
-    background: linear-gradient(135deg, #ffffff, var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    line-height: 1.1;
-  }
-  .stat .lbl { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
-
-  /* COUNTDOWN */
-  .countdown-row { display: flex; gap: 10px; justify-content: center; margin: 20px 0 8px; }
-  .cd-box {
-    display: flex; flex-direction: column; align-items: center;
-    background: rgba(74,144,226,0.12); border: 1px solid rgba(74,144,226,0.25);
-    border-radius: 14px; padding: 12px 16px; min-width: 64px;
-  }
-  .cd-box .cd-num {
-    font-family: 'DM Serif Display', serif; font-size: 30px; line-height: 1;
-    background: linear-gradient(135deg, #fff, var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .cd-box .cd-lbl { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
-
-  /* INFO ROWS */
-  .info-row { display: flex; align-items: flex-start; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--border); }
-  .info-row:last-child { border-bottom: none; }
-  .info-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; margin-top: 1px; }
-  .info-body { flex: 1; }
-  .info-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
-  .info-value { font-size: 15px; font-weight: 500; line-height: 1.4; }
-
-  /* CHIPS */
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
-  .chip { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 500; }
-
-  /* CTA */
-  .cta-btn {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%; padding: 16px; border-radius: 16px; border: none;
-    background: linear-gradient(135deg, var(--accent), #2d6bbf);
-    color: white; font-family: 'DM Sans', sans-serif;
-    font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 8px;
-    transition: opacity 0.2s, transform 0.15s;
-    text-decoration: none; -webkit-tap-highlight-color: transparent;
-  }
-  .cta-btn:active { opacity: 0.85; transform: scale(0.98); }
-  .cta-btn.secondary { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); margin-top: 8px; }
-
-  /* LOADING */
-  .loading-pulse { display: flex; flex-direction: column; gap: 10px; padding: 8px 0; }
-  .skeleton {
-    background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
-    background-size: 200% 100%; animation: shimmer 1.5s infinite;
-    border-radius: 8px; height: 16px;
-  }
-  .skeleton.tall { height: 80px; border-radius: 14px; }
-  .skeleton.short { width: 60%; }
-  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-  /* ERROR */
-  .error-box { text-align: center; padding: 32px 16px; color: var(--muted); }
-  .error-box .error-icon { font-size: 36px; margin-bottom: 10px; }
-  .error-box p { font-size: 14px; line-height: 1.6; }
-
-  /* BOTTOM NAV */
-  .bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(5,13,31,0.85);
-    backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%);
-    border-top: 1px solid rgba(255,255,255,0.08);
-    display: flex; justify-content: space-around; align-items: flex-end;
-    padding: 10px 4px calc(10px + var(--safe-b));
-    height: calc(var(--nav-h) + var(--safe-b));
-  }
-  .nav-item {
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    cursor: pointer; padding: 6px 8px; border-radius: 14px;
-    transition: background 0.2s; -webkit-tap-highlight-color: transparent; min-width: 50px;
-  }
-  .nav-icon { font-size: 22px; line-height: 1; transition: transform 0.2s; }
-  .nav-label { font-size: 10px; font-weight: 500; color: var(--muted); letter-spacing: 0.2px; transition: color 0.2s; }
-  .nav-item.active .nav-label { color: var(--accent2); }
-  .nav-item.active .nav-icon  { transform: scale(1.1); }
-  .nav-item:active { background: rgba(255,255,255,0.06); }
-
-  /* ANIMATIONS */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Videorounds in Movement Disorders</title>
+  <meta name="theme-color" content="#0a1430" />
+  <style>
+    :root{
+      --bg1:#07142d;
+      --bg2:#1a1d57;
+      --bg3:#35165f;
+      --card:rgba(255,255,255,.07);
+      --card2:rgba(255,255,255,.05);
+      --line:rgba(255,255,255,.10);
+      --txt:#f3f6ff;
+      --muted:#b7c2e0;
+      --green:#30d5a8;
+      --blue:#3f7cff;
+      --purple:#7556ff;
+      --danger:#ff7c94;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color:var(--txt);
+      background:
+        radial-gradient(circle at 18% 16%, rgba(48,213,168,.18), transparent 24%),
+        radial-gradient(circle at 72% 20%, rgba(63,124,255,.14), transparent 24%),
+        radial-gradient(circle at 68% 78%, rgba(117,86,255,.18), transparent 24%),
+        linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+      min-height:100vh;
+    }
+    .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 70px}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:20px;
+      padding:10px 0 26px;
+    }
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background:linear-gradient(180deg,#56e7c0,#5476ff 55%, #6a41ff);
+      box-shadow:0 10px 30px rgba(72,125,255,.25);
+    }
+    .brand h1{margin:0;font-size:18px;line-height:1.1}
+    .brand p{margin:4px 0 0;color:var(--muted);font-size:13px}
+    .nav{display:flex;flex-wrap:wrap;gap:10px}
+    .nav a{
+      color:#dfe8ff;text-decoration:none;font-size:14px;
+      border:1px solid var(--line);padding:10px 16px;border-radius:999px;
+      background:rgba(255,255,255,.04)
+    }
+    .hero{display:grid;grid-template-columns:1.15fr .85fr;gap:20px;margin-top:8px}
+    .card{
+      background:linear-gradient(180deg,var(--card),var(--card2));
+      border:1px solid var(--line);
+      border-radius:24px;
+      box-shadow:0 20px 60px rgba(0,0,0,.18);
+      backdrop-filter: blur(12px);
+    }
+    .hero-main{padding:32px}
+    .pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+    .pill{
+      padding:8px 12px;border-radius:999px;border:1px solid var(--line);
+      background:rgba(255,255,255,.04);font-size:12px;color:#d8e1ff
+    }
+    .hero h2{
+      margin:0 0 12px;font-size:58px;line-height:1.03;letter-spacing:-.03em;
+      max-width:820px;
+    }
+    .gradient{
+      background:linear-gradient(90deg,#ffffff,#53e1c5 42%, #71a2ff 76%, #c9bbff);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .hero p{
+      margin:0 0 18px;color:var(--muted);font-size:17px;line-height:1.6;max-width:720px
+    }
+    .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:14px 20px;border-radius:14px;text-decoration:none;font-weight:700;
+      border:1px solid var(--line);color:#fff;background:rgba(255,255,255,.05);cursor:pointer;
+    }
+    .btn.primary{background:linear-gradient(90deg,#2dd4aa,#3f7cff)}
+    .btn.secondary{background:rgba(255,255,255,.06)}
+    .side{padding:26px}
+    .side h3{margin:0 0 16px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#d7e2ff}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .mini{border:1px solid var(--line);border-radius:18px;padding:16px;background:rgba(255,255,255,.035)}
+    .mini .label{font-size:12px;color:var(--muted)}
+    .mini .value{margin-top:8px;font-size:24px;font-weight:800}
+    .mini .value.sm{font-size:17px;font-weight:700}
+    .barbox{margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.035)}
+    .bar-top{display:flex;justify-content:space-between;color:#dbe3ff;font-size:14px;margin-bottom:10px}
+    .bar{height:12px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+    .bar > div{height:100%;width:0;background:linear-gradient(90deg,#2dd4aa,#4b80ff,#7556ff);border-radius:999px;transition:width .4s ease}
+    .section{margin-top:34px}
+    .title{font-size:22px;margin:0 0 8px}
+    .sub{margin:0 0 18px;color:var(--muted)}
+    .cases{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .case{border:1px solid var(--line);border-radius:18px;padding:18px;background:rgba(255,255,255,.04)}
+    .case .n{font-size:34px;font-weight:800;color:#eaf0ff}
+    .case .t{font-size:20px;font-weight:700;margin-top:4px}
+    .case .m{font-size:14px;color:var(--muted);margin-top:6px}
+    .archive-tools{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+    .tool, .tool-select, .tool-input{
+      border:1px solid var(--line);border-radius:14px;padding:12px 14px;color:#d6dfff;background:rgba(255,255,255,.04);font-size:14px;width:100%;
+    }
+    .tool-input::placeholder{color:#b7c2e0}
+    .tool-select option{color:#111}
+    .archive-list{display:grid;gap:12px;margin-top:16px}
+    .archive-item{border:1px solid var(--line);border-radius:18px;padding:16px;background:rgba(255,255,255,.04)}
+    .archive-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+    .archive-code{font-size:26px;font-weight:800}
+    .archive-title{font-size:20px;font-weight:700;margin-top:4px}
+    .archive-meta{font-size:14px;color:var(--muted);margin-top:8px;line-height:1.6}
+    .badge{display:inline-flex;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid var(--line);font-size:12px}
+    .map{border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#dfe7ef;height:310px;position:relative;margin-top:18px}
+    .map iframe{width:100%;height:100%;border:0}
+    .centri-grid,.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .centro,.action{border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.045);overflow:hidden}
+    .centro-img{
+      height:120px;background:
+        linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.02)),
+        radial-gradient(circle at 30% 40%, rgba(255,255,255,.25), transparent 24%),
+        linear-gradient(135deg,#6d8cc3,#344b78,#263255);
+    }
+    .centro-body,.action-body{padding:16px}
+    .centro-body h4,.action-body h4{margin:0 0 6px;font-size:22px}
+    .small{color:var(--muted);font-size:14px}
+    .linkrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .mini-btn{
+      padding:9px 12px;border-radius:10px;background:#243160;border:1px solid var(--line);
+      color:#e9efff;text-decoration:none;font-size:13px
+    }
+    .mini-btn.green{background:#166f66}
+    .status{margin-top:18px;padding:14px 16px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:14px;color:#dfe7ff}
+    .status.error{border-color:rgba(255,124,148,.35);background:rgba(255,124,148,.10)}
+    .muted{color:var(--muted)}
+    footer{margin-top:40px;color:var(--muted);font-size:13px}
+    @media (max-width:1024px){
+      .hero{grid-template-columns:1fr}
+      .centri-grid,.actions{grid-template-columns:repeat(2,1fr)}
+      .archive-tools{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width:700px){
+      .hero h2{font-size:38px}
+      .cases,.centri-grid,.actions,.archive-tools,.grid2{grid-template-columns:1fr}
+      .wrap{padding:20px 14px 50px}
+    }
+  </style>
 </head>
 <body>
-
-<!-- ═══════════════════ PAGE: HOME ═══════════════════ -->
-<div id="page-Home" class="page active">
-<div class="scroll">
-
-  <div class="hero">
-    <img class="hero-logo" src="videorounds-logo.png" alt="VideoRounds logo" onerror="this.style.display='none'">
-    <div class="hero-wordmark">
-      <span class="brand">VideoRounds</span>
-      <span class="sub">in Movement Disorders</span>
-    </div>
-    <p class="hero-desc">Piattaforma scientifica per la discussione di casi clinici nei disturbi del movimento.</p>
-    <div class="quick-grid">
-      <button class="quick-btn" onclick="navigateTo('Prossimo')"><span class="icon">📅</span> Prossimo</button>
-      <button class="quick-btn" onclick="navigateTo('Casi')"><span class="icon">🧠</span> Casi clinici</button>
-      <button class="quick-btn" onclick="navigateTo('Archivio')"><span class="icon">🗂️</span> Archivio</button>
-      <button class="quick-btn" onclick="navigateTo('Network')"><span class="icon">🏥</span> Network</button>
-      <button class="quick-btn wide" onclick="navigateTo('Partecipa')"><span class="icon">✋</span> Partecipa al prossimo incontro</button>
-    </div>
-  </div>
-
-  <div class="section" id="home-event-card">
-    <div class="section-label">In evidenza</div>
-    <h2>Prossimo Videoround</h2>
-    <div class="loading-pulse"><div class="skeleton tall"></div></div>
-  </div>
-
-  <div class="section">
-    <div class="section-label">La piattaforma</div>
-    <div class="stats">
-      <div class="stat"><div class="val">10</div><div class="lbl">Incontri</div></div>
-      <div class="stat"><div class="val" id="stat-casi">—</div><div class="lbl">Casi</div></div>
-      <div class="stat"><div class="val">—</div><div class="lbl">Centri</div></div>
-      <div class="stat"><div class="val">—</div><div class="lbl">Neurologi</div></div>
-    </div>
-  </div>
-
-</div>
-</div>
-
-<!-- ═══════════════════ PAGE: PROSSIMO ═══════════════════ -->
-<div id="page-Prossimo" class="page">
-  <div class="page-header"><h2>Prossimo Videoround</h2></div>
-  <div class="scroll" style="padding-top:8px">
-    <div id="prossimo-content">
-      <div class="section">
-        <div class="loading-pulse">
-          <div class="skeleton tall"></div>
-          <div class="skeleton"></div>
-          <div class="skeleton short"></div>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>Videorounds in Movement Disorders</h1>
+          <p>Movement Disorders · Italia</p>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════ PAGINE PLACEHOLDER ═══════════════════ -->
-<div id="page-Casi" class="page">
-  <div class="page-header"><h2>Casi Clinici</h2></div>
-  <div class="scroll" style="padding-top:8px">
-    <div class="section"><div class="error-box"><div class="error-icon">🧠</div><p>Sezione in sviluppo.</p></div></div>
-  </div>
-</div>
-
-<div id="page-Archivio" class="page">
-  <div class="page-header"><h2>Archivio</h2></div>
-  <div class="scroll" style="padding-top:8px">
-    <div class="section"><div class="error-box"><div class="error-icon">🗂️</div><p>Sezione in sviluppo.</p></div></div>
-  </div>
-</div>
-
-<div id="page-Network" class="page">
-  <div class="page-header"><h2>Network</h2></div>
-  <div class="scroll" style="padding-top:8px">
-    <div class="section"><div class="error-box"><div class="error-icon">🏥</div><p>Sezione in sviluppo.</p></div></div>
-  </div>
-</div>
-
-<div id="page-Partecipa" class="page">
-  <div class="page-header"><h2>Partecipa</h2></div>
-  <div class="scroll" style="padding-top:8px">
-    <div class="section"><div class="error-box"><div class="error-icon">✋</div><p>Sezione in sviluppo.</p></div></div>
-  </div>
-</div>
-
-<!-- ═══════════════════ BOTTOM NAV ═══════════════════ -->
-<nav class="bottom-nav">
-  <div class="nav-item active" onclick="navigateTo('Home')">
-    <span class="nav-icon">🏠</span><span class="nav-label">Home</span>
-  </div>
-  <div class="nav-item" onclick="navigateTo('Prossimo')">
-    <span class="nav-icon">📅</span><span class="nav-label">Prossimo</span>
-  </div>
-  <div class="nav-item" onclick="navigateTo('Casi')">
-    <span class="nav-icon">🧠</span><span class="nav-label">Casi</span>
-  </div>
-  <div class="nav-item" onclick="navigateTo('Archivio')">
-    <span class="nav-icon">🗂️</span><span class="nav-label">Archivio</span>
-  </div>
-  <div class="nav-item" onclick="navigateTo('Network')">
-    <span class="nav-icon">🏥</span><span class="nav-label">Network</span>
-  </div>
-  <div class="nav-item" onclick="navigateTo('Partecipa')">
-    <span class="nav-icon">✋</span><span class="nav-label">Partecipa</span>
-  </div>
-</nav>
-
-<!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
-<script>
-
-// ── CONFIG ──────────────────────────────────────────────
-const SHEET_ID   = '1zE4Yfw0CqKnu_IKu_J_D4-NmrzNwYF0NYjEZ6XdKuX0';
-const GID_EVENTI = '542281569';
-
-// Indici colonne (0-based): A=0 ID_EVENTO, B=1 NUMERO_VR, C=2 DATA, D=3 ORA,
-// E=4 SEDE, F=5 CITTA, G=6 FOCUS, H=7 RELATORI, I=8 NUMERO_CASI,
-// J=9 LINK_ISCRIZIONE, K=10 LINK_MATERIALI, L=11 NOTE
-const COL = { ID:0, NUMERO_VR:1, DATA:2, ORA:3, SEDE:4, CITTA:5, FOCUS:6, RELATORI:7, NUMERO_CASI:8, LINK_ISCRIZIONE:9, LINK_MATERIALI:10, NOTE:11 };
-
-// ── NAVIGAZIONE ─────────────────────────────────────────
-function navigateTo(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(el =>
-    el.classList.toggle('active', el.querySelector('.nav-label').textContent === name)
-  );
-  const page = document.getElementById('page-' + name);
-  if (page) { page.classList.add('active'); window.scrollTo(0, 0); }
-}
-
-// ── FETCH SHEET ─────────────────────────────────────────
-async function fetchSheet(gid) {
-  const url  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`;
-  const res  = await fetch(url);
-  const text = await res.text();
-  const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/)[1]);
-  return json.table;
-}
-
-function rowToObj(row) {
-  const get = i => (row.c[i] && row.c[i].v !== null) ? row.c[i].v : '';
-  return {
-    numero_vr:       get(COL.NUMERO_VR),
-    data:            get(COL.DATA),
-    ora:             get(COL.ORA),
-    sede:            get(COL.SEDE),
-    citta:           get(COL.CITTA),
-    focus:           get(COL.FOCUS),
-    relatori:        get(COL.RELATORI),
-    numero_casi:     get(COL.NUMERO_CASI),
-    link_iscrizione: get(COL.LINK_ISCRIZIONE),
-    link_materiali:  get(COL.LINK_MATERIALI),
-    note:            get(COL.NOTE),
-  };
-}
-
-// ── DATE UTILS ──────────────────────────────────────────
-function parseGvizDate(val) {
-  if (!val) return null;
-  if (typeof val === 'string') {
-    const m = val.match(/Date\((\d+),(\d+),(\d+)\)/);
-    if (m) return new Date(+m[1], +m[2], +m[3]);
-  }
-  return null;
-}
-
-function formatData(val) {
-  const d = parseGvizDate(val);
-  if (!d) return val || '—';
-  return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
-}
-
-function formatOra(val) {
-  if (!val && val !== 0) return '—';
-  if (typeof val === 'number') {
-    if (val < 24) return `${Math.floor(val)}:00`;
-    const h = Math.floor(val * 24);
-    const m = Math.round((val * 24 - h) * 60);
-    return `${h}:${m.toString().padStart(2,'0')}`;
-  }
-  return val;
-}
-
-// ── COUNTDOWN ───────────────────────────────────────────
-function buildCountdown(dataVal) {
-  const eventDate = parseGvizDate(dataVal);
-  if (!eventDate) return '';
-  const diff = eventDate - new Date();
-  if (diff < 0) return `<p style="color:var(--muted);font-size:13px;text-align:center;padding:8px 0">Evento concluso</p>`;
-  const days  = Math.floor(diff / 86400000);
-  const hours = Math.floor((diff % 86400000) / 3600000);
-  const mins  = Math.floor((diff % 3600000) / 60000);
-  return `
-    <div class="countdown-row">
-      <div class="cd-box"><span class="cd-num">${days}</span><span class="cd-lbl">Giorni</span></div>
-      <div class="cd-box"><span class="cd-num">${hours}</span><span class="cd-lbl">Ore</span></div>
-      <div class="cd-box"><span class="cd-num">${mins}</span><span class="cd-lbl">Min</span></div>
-    </div>`;
-}
-
-// ── RENDER ──────────────────────────────────────────────
-function renderProssimo(ev) {
-  const relatori = ev.relatori ? ev.relatori.split(',').map(r => r.trim()).filter(Boolean) : [];
-  const chips    = relatori.length
-    ? `<div class="chips">${relatori.map(r => `<span class="chip">👤 ${r}</span>`).join('')}</div>`
-    : `<span style="color:var(--muted);font-size:13px">Non specificati</span>`;
-
-  const btnIscr = ev.link_iscrizione
-    ? `<a class="cta-btn" href="${ev.link_iscrizione}" target="_blank">✏️ Iscriviti all'incontro</a>`
-    : `<button class="cta-btn" style="opacity:.4;cursor:default" disabled>✏️ Iscrizioni non ancora aperte</button>`;
-
-  const btnMat = ev.link_materiali
-    ? `<a class="cta-btn secondary" href="${ev.link_materiali}" target="_blank">📂 Materiali</a>`
-    : '';
-
-  const noteHtml = ev.note
-    ? `<div class="section"><div class="section-label">Note</div><p style="font-size:14px;line-height:1.6;color:var(--muted)">${ev.note}</p></div>`
-    : '';
-
-  return `
-    <div class="section">
-      <div class="section-label">Videoround n° ${ev.numero_vr || '—'}</div>
-      ${buildCountdown(ev.data)}
-      <div class="info-row">
-        <span class="info-icon">📅</span>
-        <div class="info-body"><div class="info-label">Data</div><div class="info-value">${formatData(ev.data)}</div></div>
-      </div>
-      <div class="info-row">
-        <span class="info-icon">🕐</span>
-        <div class="info-body"><div class="info-label">Ora</div><div class="info-value">ore ${formatOra(ev.ora)}</div></div>
-      </div>
-      <div class="info-row">
-        <span class="info-icon">📍</span>
-        <div class="info-body"><div class="info-label">Sede</div><div class="info-value">${ev.sede || '—'}${ev.citta ? ' — ' + ev.citta : ''}</div></div>
-      </div>
-      <div class="info-row">
-        <span class="info-icon">🎯</span>
-        <div class="info-body"><div class="info-label">Focus</div><div class="info-value">${ev.focus || '—'}</div></div>
-      </div>
-      <div class="info-row">
-        <span class="info-icon">🧬</span>
-        <div class="info-body"><div class="info-label">Casi in discussione</div><div class="info-value">${ev.numero_casi || '—'}</div></div>
-      </div>
-      <div class="info-row" style="border-bottom:none">
-        <span class="info-icon">👥</span>
-        <div class="info-body"><div class="info-label">Relatori</div>${chips}</div>
+      <div class="nav">
+        <a href="#prossimo">Prossimo</a>
+        <a href="#casi">Casi clinici</a>
+        <a href="#archivio">Archivio</a>
+        <a href="#network">Network</a>
+        <a href="#partecipa">Partecipa</a>
       </div>
     </div>
-    <div class="section" style="padding:16px">
-      ${btnIscr}
-      ${btnMat}
-    </div>
-    ${noteHtml}
-  `;
-}
 
-function renderHomeCard(ev) {
-  const d      = parseGvizDate(ev.data);
-  const giorno = d ? d.getDate() : '—';
-  const mese   = d ? d.toLocaleDateString('it-IT', { month: 'short' }).replace('.','') : '';
-  return `
-    <div class="event-card">
-      <div class="event-date-badge">
-        <span class="day">${giorno}</span>
-        <span class="month">${mese}</span>
-      </div>
-      <div class="event-info">
-        <div class="event-title">Videoround n° ${ev.numero_vr || '—'}</div>
-        <div class="event-meta">
-          <span>📍 ${ev.sede || '—'}${ev.citta ? ' — ' + ev.citta : ''}</span>
-          <span>🕐 ore ${formatOra(ev.ora)}</span>
+    <section class="hero">
+      <div class="card hero-main">
+        <div class="pill-row">
+          <div class="pill">Piattaforma scientifica</div>
+          <div class="pill">Casi clinici reali</div>
+          <div class="pill">Confronto tra centri</div>
+          <div class="pill">Archivio scientifico</div>
         </div>
-        <div class="pill" onclick="navigateTo('Prossimo')">Vedi dettagli →</div>
+        <h2><span class="gradient">Videorounds in Movement Disorders</span><br>piattaforma scientifica per casi clinici, archivio e network.</h2>
+        <p>
+          Un ambiente digitale pensato per neurologi e specializzandi: prossimi incontri, casi del programma,
+          archivio Videorounds, centri partecipanti e accesso rapido ai moduli della community.
+        </p>
+        <div class="cta">
+          <a id="btnIscrizioneMain" class="btn primary" href="#" target="_blank" rel="noopener">Iscriviti al prossimo incontro</a>
+          <a id="btnMaterialiMain" class="btn secondary" href="#archivio">Materiali / Programma</a>
+          <a class="btn secondary" href="#archivio">Consulta archivio</a>
+        </div>
+        <div id="statusBox" class="status">Caricamento dati da Google Sheets…</div>
       </div>
-    </div>`;
-}
 
-// ── INIT ────────────────────────────────────────────────
-async function init() {
-  try {
-    const table = await fetchSheet(GID_EVENTI);
-    if (!table || !table.rows || table.rows.length === 0) throw new Error('Nessun dato');
+      <div class="card side" id="prossimo">
+        <h3>Prossimo incontro</h3>
+        <div class="grid2">
+          <div class="mini">
+            <div class="label">Data</div>
+            <div id="nextDate" class="value sm">In aggiornamento</div>
+          </div>
+          <div class="mini">
+            <div class="label">Sede</div>
+            <div id="nextVenue" class="value sm">Da definire</div>
+          </div>
+          <div class="mini">
+            <div class="label">Focus</div>
+            <div id="nextFocus" class="value sm">Nuovi casi in selezione</div>
+          </div>
+          <div class="mini">
+            <div class="label">Iscritti</div>
+            <div id="registrationsCount" class="value">0</div>
+          </div>
+        </div>
+        <div class="barbox">
+          <div class="bar-top">
+            <span>Disponibilità posti</span>
+            <strong id="availabilityText">0 / 0</strong>
+          </div>
+          <div class="bar"><div id="availabilityBar"></div></div>
+        </div>
+      </div>
+    </section>
 
-    const ev = rowToObj(table.rows[0]);
+    <section class="section" id="casi">
+      <h3 class="title">Casi del prossimo Videoround</h3>
+      <p class="sub">Sezione aggiornata automaticamente dal tab CASI.</p>
+      <div id="casesGrid" class="cases"></div>
+    </section>
 
-    // Home card
-    document.getElementById('home-event-card').innerHTML =
-      `<div class="section-label">In evidenza</div>
-       <h2>Prossimo Videoround</h2>
-       ${renderHomeCard(ev)}`;
+    <section class="section" id="archivio">
+      <h3 class="title">Archivio scientifico</h3>
+      <p class="sub">Ricerca e filtri sui casi presenti nel Google Sheet.</p>
+      <div class="archive-tools">
+        <input id="searchInput" class="tool-input" type="text" placeholder="🔎 Cerca per titolo, relatore, codice o centro" />
+        <select id="vrFilter" class="tool-select"><option value="">Tutti i VR</option></select>
+        <select id="centerFilter" class="tool-select"><option value="">Tutti i centri</option></select>
+        <select id="speakerFilter" class="tool-select"><option value="">Tutti i relatori</option></select>
+      </div>
+      <div id="archiveList" class="archive-list"></div>
+      <div class="map">
+        <iframe id="mapFrame" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Roma&output=embed"></iframe>
+      </div>
+    </section>
 
-    // Prossimo page
-    document.getElementById('prossimo-content').innerHTML = renderProssimo(ev);
+    <section class="section" id="network">
+      <h3 class="title">Network Videorounds</h3>
+      <p class="sub">Centri partecipanti letti dal tab CENTRI.</p>
+      <div id="centriGrid" class="centri-grid"></div>
+    </section>
 
-    // Stat
-    if (ev.numero_casi) document.getElementById('stat-casi').textContent = ev.numero_casi;
+    <section class="section" id="partecipa">
+      <h3 class="title">Partecipa</h3>
+      <p class="sub">Accesso rapido a iscrizione, proposta caso e materiali.</p>
+      <div class="actions">
+        <div class="action"><div class="action-body"><h4>Iscriviti</h4><div class="small">Iscriviti al prossimo Videoround.</div><div class="linkrow"><a id="btnIscrizione" class="btn primary" href="#" target="_blank" rel="noopener">Iscriviti</a></div></div></div>
+        <div class="action"><div class="action-body"><h4>Proponi un caso</h4><div class="small">Invia un caso clinico al board.</div><div class="linkrow"><a id="btnProponiCaso" class="btn secondary" href="#" target="_blank" rel="noopener">Proponi un caso</a></div></div></div>
+        <div class="action"><div class="action-body"><h4>Newsletter</h4><div class="small">Ricevi aggiornamenti scientifici e date.</div><div class="linkrow"><a id="btnNewsletter" class="btn secondary" href="#" target="_blank" rel="noopener">Iscriviti</a></div></div></div>
+        <div class="action"><div class="action-body"><h4>Archivio</h4><div class="small">Consulta lo storico dei Videorounds.</div><div class="linkrow"><a class="btn secondary" href="#archivio">Apri archivio</a></div></div></div>
+      </div>
+    </section>
 
-  } catch(err) {
-    console.error('Errore:', err);
-    const errHtml = `<div class="error-box"><div class="error-icon">⚠️</div><p>Impossibile caricare i dati.<br>Controlla la connessione.</p></div>`;
-    document.getElementById('home-event-card').innerHTML =
-      `<div class="section-label">In evidenza</div><h2>Prossimo Videoround</h2>${errHtml}`;
-    document.getElementById('prossimo-content').innerHTML = `<div class="section">${errHtml}</div>`;
-  }
-}
+    <footer>
+      Videorounds in Movement Disorders · piattaforma collegata a Google Sheets
+    </footer>
+  </div>
 
-init();
+  <script>
+    const SHEET_ID = '1zE4Yfw0CqKnu_IKu_J_D4-NmrzNwYF0NYjEZ6XdKuX0';
+    const GIDS = {
+      EVENTI: '542281569',
+      CASI: '625293273',
+      CENTRI: '1823139789',
+      ISCRIZIONI: '1956086220'
+    };
 
-</script>
+    // Inserisci qui i link reali se vuoi differenziarli
+    const DEFAULT_FORM_LINK = 'https://docs.google.com/forms/d/e/1FAIpQLScRT3WXM4d8Q1JzFKCzdHddue1ykesaIuUsoGHty41QbPWrkA/viewform';
+
+    const state = {
+      eventi: [],
+      casi: [],
+      centri: [],
+      iscrizioni: []
+    };
+
+    const els = {
+      statusBox: document.getElementById('statusBox'),
+      nextDate: document.getElementById('nextDate'),
+      nextVenue: document.getElementById('nextVenue'),
+      nextFocus: document.getElementById('nextFocus'),
+      registrationsCount: document.getElementById('registrationsCount'),
+      availabilityText: document.getElementById('availabilityText'),
+      availabilityBar: document.getElementById('availabilityBar'),
+      casesGrid: document.getElementById('casesGrid'),
+      archiveList: document.getElementById('archiveList'),
+      centriGrid: document.getElementById('centriGrid'),
+      mapFrame: document.getElementById('mapFrame'),
+      searchInput: document.getElementById('searchInput'),
+      vrFilter: document.getElementById('vrFilter'),
+      centerFilter: document.getElementById('centerFilter'),
+      speakerFilter: document.getElementById('speakerFilter'),
+      btnIscrizione: document.getElementById('btnIscrizione'),
+      btnIscrizioneMain: document.getElementById('btnIscrizioneMain'),
+      btnMaterialiMain: document.getElementById('btnMaterialiMain'),
+      btnProponiCaso: document.getElementById('btnProponiCaso'),
+      btnNewsletter: document.getElementById('btnNewsletter')
+    };
+
+    function normalizeKey(str = '') {
+      return String(str)
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '')
+        .toUpperCase();
+    }
+
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let cell = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"') {
+          if (inQuotes && next === '"') {
+            cell += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === ',' && !inQuotes) {
+          row.push(cell);
+          cell = '';
+        } else if ((char === '\n' || char === '\r') && !inQuotes) {
+          if (char === '\r' && next === '\n') i++;
+          row.push(cell);
+          if (row.some(v => String(v).trim() !== '')) rows.push(row);
+          row = [];
+          cell = '';
+        } else {
+          cell += char;
+        }
+      }
+
+      if (cell.length || row.length) {
+        row.push(cell);
+        if (row.some(v => String(v).trim() !== '')) rows.push(row);
+      }
+
+      if (!rows.length) return [];
+
+      const headers = rows[0].map(h => normalizeKey(h));
+      return rows.slice(1).map(r => {
+        const obj = {};
+        headers.forEach((h, idx) => obj[h] = (r[idx] || '').trim());
+        return obj;
+      });
+    }
+
+    async function fetchSheetByGid(gid) {
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Errore lettura sheet gid ${gid}`);
+      const text = await res.text();
+      return parseCSV(text);
+    }
+
+    function getFirst(obj, keys, fallback = '') {
+      for (const key of keys) {
+        if (obj && obj[key] !== undefined && String(obj[key]).trim() !== '') return String(obj[key]).trim();
+      }
+      return fallback;
+    }
+
+    function titleCase(value = '') {
+      return String(value)
+        .toLowerCase()
+        .split(' ')
+        .map(v => v ? v.charAt(0).toUpperCase() + v.slice(1) : v)
+        .join(' ');
+    }
+
+    function parseItalianDate(str) {
+      if (!str) return null;
+      const s = String(str).trim();
+
+      if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+        const d = new Date(s);
+        return isNaN(d) ? null : d;
+      }
+
+      const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+      if (m) {
+        const dd = Number(m[1]);
+        const mm = Number(m[2]) - 1;
+        const yy = Number(m[3].length === 2 ? '20' + m[3] : m[3]);
+        const d = new Date(yy, mm, dd);
+        return isNaN(d) ? null : d;
+      }
+      return null;
+    }
+
+    function formatDateIT(date) {
+      if (!(date instanceof Date) || isNaN(date)) return 'In aggiornamento';
+      return date.toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' });
+    }
+
+    function uniqueSorted(values) {
+      return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, 'it'));
+    }
+
+    function fillSelect(select, values, defaultLabel) {
+      select.innerHTML = `<option value="">${defaultLabel}</option>`;
+      uniqueSorted(values).forEach(v => {
+        const op = document.createElement('option');
+        op.value = v;
+        op.textContent = v;
+        select.appendChild(op);
+      });
+    }
+
+    function setStatus(message, isError = false) {
+      els.statusBox.textContent = message;
+      els.statusBox.classList.toggle('error', isError);
+    }
+
+    function renderNextEvent() {
+      const events = state.eventi.map(ev => {
+        const rawDate = getFirst(ev, ['DATA', 'DATA_EVENTO', 'DATE']);
+        return {
+          raw: ev,
+          date: parseItalianDate(rawDate),
+          title: getFirst(ev, ['TITOLO', 'TEMA', 'FOCUS', 'ARGOMENTO'], 'Videoround'),
+          venue: getFirst(ev, ['LUOGO', 'SEDE', 'CENTRO', 'LOCATION'], 'Da definire'),
+          registrationLink: getFirst(ev, ['LINK_ISCRIZIONE', 'LINK_ISCRIZ', 'ISCRIZIONE_LINK'], DEFAULT_FORM_LINK),
+          materialsLink: getFirst(ev, ['LINK_MATERIALI', 'LINK_MATE', 'MATERIALI_LINK'], '#'),
+          caseFormLink: getFirst(ev, ['LINK_CANDIDATURA', 'LINK_CASO', 'FORM_CASI'], DEFAULT_FORM_LINK),
+          newsletterLink: getFirst(ev, ['LINK_NEWSLETTER', 'NEWSLETTER_LINK'], DEFAULT_FORM_LINK),
+          posti: Number(getFirst(ev, ['POSTI', 'POSTI_TOTALI', 'MAX_POSTI'], '15')) || 15,
+          iscritti: Number(getFirst(ev, ['ISCRITTI', 'N_ISCRITTI'], String(state.iscrizioni.length))) || state.iscrizioni.length
+        };
+      }).sort((a, b) => {
+        const ad = a.date ? a.date.getTime() : Number.MAX_SAFE_INTEGER;
+        const bd = b.date ? b.date.getTime() : Number.MAX_SAFE_INTEGER;
+        return ad - bd;
+      });
+
+      const now = new Date();
+      const upcoming = events.find(e => e.date && e.date >= new Date(now.getFullYear(), now.getMonth(), now.getDate())) || events[0];
+
+      if (!upcoming) {
+        els.nextDate.textContent = 'In aggiornamento';
+        els.nextVenue.textContent = 'Da definire';
+        els.nextFocus.textContent = 'Nuovi casi in selezione';
+        els.registrationsCount.textContent = String(state.iscrizioni.length || 0);
+        els.availabilityText.textContent = `${state.iscrizioni.length || 0} / 15`;
+        els.availabilityBar.style.width = '0%';
+        return;
+      }
+
+      const posti = Math.max(upcoming.posti, 1);
+      const iscritti = Math.max(upcoming.iscritti, state.iscrizioni.length);
+      const usedPercent = Math.min((iscritti / posti) * 100, 100);
+      const available = Math.max(posti - iscritti, 0);
+
+      els.nextDate.textContent = formatDateIT(upcoming.date);
+      els.nextVenue.textContent = upcoming.venue;
+      els.nextFocus.textContent = upcoming.title;
+      els.registrationsCount.textContent = String(iscritti);
+      els.availabilityText.textContent = `${available} / ${posti}`;
+      els.availabilityBar.style.width = `${usedPercent}%`;
+
+      const regLink = upcoming.registrationLink || DEFAULT_FORM_LINK;
+      els.btnIscrizione.href = regLink;
+      els.btnIscrizioneMain.href = regLink;
+      els.btnMaterialiMain.href = upcoming.materialsLink || '#archivio';
+      els.btnProponiCaso.href = upcoming.caseFormLink || DEFAULT_FORM_LINK;
+      els.btnNewsletter.href = upcoming.newsletterLink || DEFAULT_FORM_LINK;
+    }
+
+    function normalizeCaseRow(row) {
+      return {
+        vr: getFirst(row, ['ID_EVENTO', 'VIDEOROUND', 'VR', 'EVENTO'], 'VR'),
+        code: getFirst(row, ['CODICE_CASO', 'CODICE_CASOO', 'CODICE', 'ID_CASO'], '—'),
+        title: getFirst(row, ['TITOLO', 'TITOLO_CASO', 'CASO'], 'Titolo non disponibile'),
+        speaker: getFirst(row, ['PRESENTAZIONE', 'RELATORE', 'SPEAKER', 'PRESENTATORE'], 'Relatore non indicato'),
+        center: getFirst(row, ['CENTRO', 'SEDE', 'OSPEDALE', 'LUOGO'], 'Centro non indicato'),
+        topic: getFirst(row, ['TEMA', 'TOPIC', 'ARGOMENTO'], ''),
+        status: getFirst(row, ['STATO', 'STATUS'], ''),
+        link: getFirst(row, ['LINK', 'LINK_MATERIALI', 'MATERIALI'], ''),
+        raw: row
+      };
+    }
+
+    function renderCasesPreview() {
+      const normalized = state.casi.map(normalizeCaseRow);
+      const targetVr = normalized[normalized.length - 1]?.vr || '';
+      const preview = normalized.filter(c => !targetVr || c.vr === targetVr).slice(0, 4);
+
+      if (!preview.length) {
+        els.casesGrid.innerHTML = '<div class="case"><div class="t">Nessun caso disponibile</div><div class="m">Compila il tab CASI per vedere l’anteprima.</div></div>';
+        return;
+      }
+
+      els.casesGrid.innerHTML = preview.map(c => `
+        <div class="case">
+          <div class="n">${escapeHtml(c.code)}</div>
+          <div class="t">${escapeHtml(c.title)}</div>
+          <div class="m">${escapeHtml(c.speaker)}${c.center ? ' · ' + escapeHtml(c.center) : ''}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderArchive() {
+      const q = els.searchInput.value.trim().toLowerCase();
+      const vr = els.vrFilter.value;
+      const center = els.centerFilter.value;
+      const speaker = els.speakerFilter.value;
+
+      const normalized = state.casi.map(normalizeCaseRow);
+      const filtered = normalized.filter(item => {
+        const hay = [item.vr, item.code, item.title, item.speaker, item.center, item.topic, item.status].join(' ').toLowerCase();
+        return (!q || hay.includes(q)) &&
+               (!vr || item.vr === vr) &&
+               (!center || item.center === center) &&
+               (!speaker || item.speaker === speaker);
+      });
+
+      if (!filtered.length) {
+        els.archiveList.innerHTML = '<div class="archive-item"><div class="archive-title">Nessun risultato</div><div class="archive-meta">Prova a modificare i filtri o il testo di ricerca.</div></div>';
+        return;
+      }
+
+      els.archiveList.innerHTML = filtered.map(item => `
+        <div class="archive-item">
+          <div class="archive-top">
+            <div>
+              <div class="archive-code">${escapeHtml(item.code)}</div>
+              <div class="archive-title">${escapeHtml(item.title)}</div>
+            </div>
+            <div class="badge">${escapeHtml(item.vr)}</div>
+          </div>
+          <div class="archive-meta">
+            <strong>Relatore:</strong> ${escapeHtml(item.speaker)}<br>
+            <strong>Centro:</strong> ${escapeHtml(item.center)}
+            ${item.topic ? `<br><strong>Tema:</strong> ${escapeHtml(item.topic)}` : ''}
+            ${item.status ? `<br><strong>Stato:</strong> ${escapeHtml(item.status)}` : ''}
+          </div>
+          ${item.link ? `<div class="linkrow"><a class="mini-btn green" href="${escapeAttr(item.link)}" target="_blank" rel="noopener">Apri materiali</a></div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function renderCenters() {
+      const normalized = state.centri.map(row => ({
+        name: getFirst(row, ['CENTRO', 'NOME', 'SEDE', 'OSPEDALE'], 'Centro'),
+        city: getFirst(row, ['CITTA', 'CITTÀ', 'CITY'], 'Italia'),
+        maps: getFirst(row, ['MAPS', 'LINK_MAPS', 'GOOGLE_MAPS'], ''),
+        address: getFirst(row, ['INDIRIZZO', 'ADDRESS'], ''),
+        lat: getFirst(row, ['LAT', 'LATITUDINE'], ''),
+        lng: getFirst(row, ['LNG', 'LONG', 'LONGITUDINE'], ''),
+        detail: getFirst(row, ['DETTAGLI', 'LINK', 'URL'], '')
+      }));
+
+      if (!normalized.length) {
+        els.centriGrid.innerHTML = '<div class="centro"><div class="centro-body"><h4>Nessun centro</h4><div class="small">Compila il tab CENTRI.</div></div></div>';
+        return;
+      }
+
+      els.centriGrid.innerHTML = normalized.map(c => {
+        const query = c.maps || (c.address ? `https://maps.google.com/?q=${encodeURIComponent(c.address)}` : `https://maps.google.com/?q=${encodeURIComponent(c.name + ' ' + c.city)}`);
+        return `
+          <div class="centro">
+            <div class="centro-img"></div>
+            <div class="centro-body">
+              <h4>${escapeHtml(c.name)}</h4>
+              <div class="small">${escapeHtml(c.city)}</div>
+              <div class="linkrow">
+                <a class="mini-btn" href="${escapeAttr(query)}" target="_blank" rel="noopener">Maps</a>
+                ${c.detail ? `<a class="mini-btn green" href="${escapeAttr(c.detail)}" target="_blank" rel="noopener">Dettagli</a>` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const first = normalized[0];
+      if (first) {
+        const query = first.address || `${first.name} ${first.city}`;
+        els.mapFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
+      }
+    }
+
+    function populateFilters() {
+      const normalized = state.casi.map(normalizeCaseRow);
+      fillSelect(els.vrFilter, normalized.map(c => c.vr), 'Tutti i VR');
+      fillSelect(els.centerFilter, normalized.map(c => c.center), 'Tutti i centri');
+      fillSelect(els.speakerFilter, normalized.map(c => c.speaker), 'Tutti i relatori');
+    }
+
+    function escapeHtml(value = '') {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function escapeAttr(value = '') {
+      return escapeHtml(value);
+    }
+
+    function bindEvents() {
+      ['input', 'change'].forEach(evt => {
+        els.searchInput.addEventListener(evt, renderArchive);
+        els.vrFilter.addEventListener(evt, renderArchive);
+        els.centerFilter.addEventListener(evt, renderArchive);
+        els.speakerFilter.addEventListener(evt, renderArchive);
+      });
+    }
+
+    async function init() {
+      try {
+        bindEvents();
+        setStatus('Caricamento dati da Google Sheets…');
+
+        const [eventi, casi, centri, iscrizioni] = await Promise.all([
+          fetchSheetByGid(GIDS.EVENTI),
+          fetchSheetByGid(GIDS.CASI),
+          fetchSheetByGid(GIDS.CENTRI),
+          fetchSheetByGid(GIDS.ISCRIZIONI)
+        ]);
+
+        state.eventi = eventi;
+        state.casi = casi;
+        state.centri = centri;
+        state.iscrizioni = iscrizioni;
+
+        populateFilters();
+        renderNextEvent();
+        renderCasesPreview();
+        renderArchive();
+        renderCenters();
+
+        setStatus(`Dati caricati correttamente: ${state.eventi.length} eventi, ${state.casi.length} casi, ${state.centri.length} centri, ${state.iscrizioni.length} iscrizioni.`);
+      } catch (error) {
+        console.error(error);
+        setStatus('Errore nel caricamento dei dati. Controlla che il Google Sheet sia condiviso con accesso pubblico o “chiunque abbia il link”.', true);
+      }
+    }
+
+    init();
+  </script>
 </body>
 </html>
