@@ -344,6 +344,70 @@
   .section:nth-child(2) { animation-delay: 0.07s; }
   .section:nth-child(3) { animation-delay: 0.14s; }
 
+  /* ── ARCHIVIO ── */
+  .search-wrap { margin-top: 4px; margin-bottom: 10px; }
+  .search-box {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px; padding: 12px 16px;
+  }
+  .search-icon { width: 16px; height: 16px; flex-shrink: 0; color: var(--muted); }
+  .search-input {
+    flex: 1; background: none; border: none; outline: none;
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 400;
+  }
+  .search-input::placeholder { color: var(--muted); }
+
+  .filter-row {
+    display: flex; gap: 7px; flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .filter-chip {
+    padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+    color: var(--muted); cursor: pointer;
+    transition: all 0.2s; -webkit-tap-highlight-color: transparent;
+  }
+  .filter-chip.active {
+    background: rgba(74,144,226,0.2);
+    border-color: rgba(74,144,226,0.4);
+    color: var(--accent2);
+  }
+
+  .caso-card {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .caso-card:last-child { border-bottom: none; padding-bottom: 0; }
+  .caso-badge {
+    flex-shrink: 0; width: 38px; height: 38px;
+    background: linear-gradient(135deg, rgba(74,144,226,0.25), rgba(74,144,226,0.1));
+    border: 1px solid rgba(74,144,226,0.3);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: var(--accent2);
+    letter-spacing: 0.3px;
+  }
+  .caso-body { flex: 1; min-width: 0; }
+  .caso-title {
+    font-size: 13.5px; font-weight: 600; line-height: 1.4;
+    margin-bottom: 4px; color: var(--text);
+  }
+  .caso-title.no-title { color: var(--muted); font-style: italic; font-weight: 400; }
+  .caso-meta { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px; }
+  .caso-meta-item { display: flex; align-items: center; gap: 4px; }
+
+  .archivio-count {
+    font-size: 11px; color: var(--muted); text-align: right;
+    padding: 4px 0 8px; letter-spacing: 0.3px;
+  }
+  .no-results {
+    text-align: center; padding: 32px 16px; color: var(--muted); font-size: 14px;
+  }
+
 </style>
 </head>
 <body>
@@ -526,7 +590,31 @@
 <div id="page-Archivio" class="page">
   <div class="page-header"><h2>Archivio</h2></div>
   <div class="scroll" style="padding-top:8px">
-    <div class="section"><div class="error-box"><div class="error-icon">🗂️</div><p>Sezione in sviluppo.</p></div></div>
+
+    <!-- SEARCH BAR -->
+    <div class="search-wrap">
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input id="archivio-search" class="search-input" type="text" placeholder="Cerca titolo, relatore, sede…" oninput="renderArchivio()">
+      </div>
+    </div>
+
+    <!-- FILTRO VR -->
+    <div id="archivio-filters" class="filter-row"></div>
+
+    <!-- RISULTATI -->
+    <div id="archivio-results">
+      <div class="section">
+        <div class="loading-pulse">
+          <div class="skeleton tall"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton short"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -579,9 +667,16 @@
 
 const SHEET_ID   = '1zE4Yfw0CqKnu_IKu_J_D4-NmrzNwYF0NYjEZ6XdKuX0';
 const GID_EVENTI = '24812272';
+const GID_CASI   = '1862188500';
 const COL = { ID:0, NUMERO_VR:1, DATA:2, ORA:3, SEDE:4, CITTA:5, FOCUS:6, RELATORI:7, NUMERO_CASI:8, LINK_ISCRIZIONE:9, LINK_MATERIALI:10, NOTE:11 };
+const COL_CASO = { ID:0, NUMERO_VR:1, CASE_NUMBER:2, TITOLO:3, COGNOME:4, NOME:5, AFFILIAZIONE:6, EMAIL:7, NOTE:8 };
+
+// Cache casi
+let _casiData = [];
+let _activeVR  = 'tutti';
 
 // ── NAVIGAZIONE ─────────────────────────────────────────
+let _archivioLoaded = false;
 function navigateTo(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(el => {
@@ -592,6 +687,10 @@ function navigateTo(name) {
   });
   const page = document.getElementById('page-' + name);
   if (page) { page.classList.add('active'); window.scrollTo(0, 0); }
+  if (name === 'Archivio' && !_archivioLoaded) {
+    _archivioLoaded = true;
+    initArchivio();
+  }
 }
 
 // ── FETCH ────────────────────────────────────────────────
@@ -728,6 +827,117 @@ function renderHomeCard(ev) {
         <div class="pill" onclick="navigateTo('Prossimo')">Vedi dettagli →</div>
       </div>
     </div>`;
+}
+
+// ── ARCHIVIO ─────────────────────────────────────────────
+function buildArchivioFilters(vrs) {
+  const wrap = document.getElementById('archivio-filters');
+  const all  = ['tutti', ...vrs.map(v => 'VR' + v)];
+  wrap.innerHTML = all.map(v =>
+    `<div class="filter-chip${v === _activeVR ? ' active' : ''}" onclick="setVRFilter('${v}')">${v === 'tutti' ? 'Tutti' : v}</div>`
+  ).join('');
+}
+
+function setVRFilter(vr) {
+  _activeVR = vr;
+  // aggiorna chip
+  document.querySelectorAll('.filter-chip').forEach(el => {
+    el.classList.toggle('active', el.textContent === (vr === 'tutti' ? 'Tutti' : vr));
+  });
+  renderArchivio();
+}
+
+function renderArchivio() {
+  const query  = (document.getElementById('archivio-search')?.value || '').toLowerCase().trim();
+  const vrNum  = _activeVR === 'tutti' ? null : parseInt(_activeVR.replace('VR',''));
+
+  let filtered = _casiData.filter(c => {
+    if (vrNum !== null && c.numero_vr !== vrNum) return false;
+    if (query) {
+      const haystack = [c.titolo, c.cognome, c.nome, c.affiliazione, 'VR'+c.numero_vr, c.case_number]
+        .join(' ').toLowerCase();
+      if (!haystack.includes(query)) return false;
+    }
+    return true;
+  });
+
+  const wrap = document.getElementById('archivio-results');
+  if (filtered.length === 0) {
+    wrap.innerHTML = `<div class="section"><div class="no-results">Nessun caso trovato.</div></div>`;
+    return;
+  }
+
+  // Raggruppa per VR
+  const grouped = {};
+  filtered.forEach(c => {
+    const k = 'VR' + c.numero_vr;
+    if (!grouped[k]) grouped[k] = [];
+    grouped[k].push(c);
+  });
+
+  const countHtml = `<div class="archivio-count">${filtered.length} casi</div>`;
+
+  const html = Object.keys(grouped).sort((a,b) => {
+    return parseInt(b.replace('VR','')) - parseInt(a.replace('VR',''));
+  }).map(vr => {
+    const cards = grouped[vr].map(c => `
+      <div class="caso-card">
+        <div class="caso-badge">${c.case_number || vr}</div>
+        <div class="caso-body">
+          <div class="caso-title${!c.titolo ? ' no-title' : ''}">${c.titolo || 'Titolo non disponibile'}</div>
+          <div class="caso-meta">
+            <span class="caso-meta-item">
+              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              ${c.cognome || ''}${c.nome ? ' ' + c.nome : ''}
+            </span>
+            ${c.affiliazione ? `<span class="caso-meta-item">
+              <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 21C12 21 5 13.5 5 9a7 7 0 1 1 14 0c0 4.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              ${c.affiliazione}
+            </span>` : ''}
+          </div>
+        </div>
+      </div>`).join('');
+    return `<div class="section" style="animation:none">
+      <div class="section-label">${vr}</div>
+      ${cards}
+    </div>`;
+  }).join('');
+
+  wrap.innerHTML = countHtml + html;
+}
+
+async function initArchivio() {
+  try {
+    const table = await fetchSheet(GID_CASI);
+    if (!table || !table.rows) throw new Error('no data');
+
+    const get = (row, i) => (row.c[i] && row.c[i].v !== null) ? row.c[i].v : '';
+
+    _casiData = table.rows.map(row => ({
+      id:          get(row, COL_CASO.ID),
+      numero_vr:   get(row, COL_CASO.NUMERO_VR),
+      case_number: get(row, COL_CASO.CASE_NUMBER),
+      titolo:      get(row, COL_CASO.TITOLO),
+      cognome:     get(row, COL_CASO.COGNOME),
+      nome:        get(row, COL_CASO.NOME),
+      affiliazione:get(row, COL_CASO.AFFILIAZIONE),
+      email:       get(row, COL_CASO.EMAIL),
+      note:        get(row, COL_CASO.NOTE),
+    })).filter(c => c.numero_vr);
+
+    // Aggiorna stat casi in home
+    document.getElementById('stat-casi').textContent = _casiData.length;
+
+    // Costruisci filtri VR unici
+    const vrs = [...new Set(_casiData.map(c => c.numero_vr))].sort((a,b) => a-b);
+    buildArchivioFilters(vrs);
+    renderArchivio();
+
+  } catch(err) {
+    console.error('Archivio error:', err);
+    document.getElementById('archivio-results').innerHTML =
+      `<div class="section"><div class="error-box"><div class="error-icon">⚠️</div><p>Impossibile caricare i casi.<br>Controlla la connessione.</p></div></div>`;
+  }
 }
 
 // ── INIT ─────────────────────────────────────────────────
